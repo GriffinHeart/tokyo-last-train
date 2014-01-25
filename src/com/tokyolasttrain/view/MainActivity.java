@@ -1,8 +1,9 @@
 package com.tokyolasttrain.view;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
+import org.joda.time.LocalTime;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -67,7 +68,7 @@ public class MainActivity extends Activity
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 		{
-			processInput((TextView) view, Station.Origin, Station.Destination);
+			processSingleInput((TextView) view, Station.Origin, Station.Destination);
 		}
 	};
 	
@@ -76,7 +77,7 @@ public class MainActivity extends Activity
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 		{
-			processInput((TextView) view, Station.Destination, Station.Origin);
+			processSingleInput((TextView) view, Station.Destination, Station.Origin);
 		}
 	};
 	
@@ -91,7 +92,7 @@ public class MainActivity extends Activity
 							event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
 			{
 				_originTextView.dismissDropDown();
-				processInput((TextView) view, Station.Origin, Station.Destination);
+				processSingleInput((TextView) view, Station.Origin, Station.Destination);
 				return true;
 			}
 			
@@ -110,7 +111,7 @@ public class MainActivity extends Activity
 							event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
 			{
 				_destinationTextView.dismissDropDown();
-				processInput((TextView) view, Station.Destination, Station.Origin);
+				processSingleInput((TextView) view, Station.Destination, Station.Origin);
 				return true;
 			}
 			
@@ -127,7 +128,7 @@ public class MainActivity extends Activity
 		}
 	};
 	
-	private void processInput(TextView textView, Station station, Station otherStation)
+	private void processSingleInput(TextView textView, Station station, Station otherStation)
 	{
 		String stationName = textView.getText().toString().replaceAll("\\s","").toLowerCase(Locale.US);
 		
@@ -220,23 +221,22 @@ public class MainActivity extends Activity
 	
 	private void ShowResult()
 	{
-		
+		LocalTime currentTime = new LocalTime();
 		Planner planner = Planner.getInstance(getApplicationContext());
 		HyperdiaApi api = new HyperdiaApi();
 		
 		LastRoute route = api.GetLastRouteFor(planner.getStation(Station.Origin), planner.getStation(Station.Destination));
-		
-		
 		// DUMMY LAST TRAIN
-		Calendar calendar = Calendar.getInstance();
-		int hours = calendar.get(Calendar.HOUR);
-		int minutes = calendar.get(Calendar.MINUTE) + 3;
+		int hour = currentTime.getHourOfDay();
+		int minutes = currentTime.getMinuteOfHour() + 2;
+		LocalTime lastTrainTime = new LocalTime(hour, minutes);
 		// DUMMY LAST TRAIN
 		
-		_time.setText(String.format("%02d:%02d", hours, minutes));
+		_time.setText(String.format("%02d:%02d", currentTime.getHourOfDay(), currentTime.getMinuteOfHour()));
 		
-		new CountDownTimer(30000, 1000) {
-
+		int millisecondsLeft = lastTrainTime.getMillisOfDay() - currentTime.getMillisOfDay();
+		new CountDownTimer(millisecondsLeft, 1000)
+		{
 		     public void onTick(long millisUntilFinished)
 		     {
 		    	 int seconds = (int) (millisUntilFinished / 1000) % 60 ;

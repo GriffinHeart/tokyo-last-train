@@ -11,16 +11,15 @@
 
     <TextView
         android:id="@+id/label_origin"
-        android:focusable="true" 
-	    android:focusableInTouchMode="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/where_are_you" />
 
-    <com.tokyolasttrain.view.util.InstantAutoCompleteTextView
+    <AutoCompleteTextView
         android:id="@+id/textview_origin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:completionThreshold="2"
         android:singleLine="true"
         android:selectAllOnFocus="true" />
 
@@ -30,10 +29,11 @@
         android:layout_height="wrap_content"
         android:text="@string/where_are_you_going" />
 
-    <com.tokyolasttrain.view.util.InstantAutoCompleteTextView
+    <AutoCompleteTextView
         android:id="@+id/textview_destination"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:completionThreshold="2"
         android:singleLine="true"
         android:selectAllOnFocus="true" />
 
