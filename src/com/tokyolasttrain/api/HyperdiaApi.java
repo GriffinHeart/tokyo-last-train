@@ -11,9 +11,7 @@ import java.net.URLEncoder;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
+import org.joda.time.LocalTime;
 
 import android.renderscript.Element;
 
@@ -77,9 +75,24 @@ public class HyperdiaApi {
 	}
 
 	
-	public class LastRoute {
+	public class LastRoute
+	{
+		public String getStation()
+		{
+			return "Shinjuku (JR)";
+		}
 		
+		public String getLine()
+		{
+			return "Yamanote Line";
+		}
+		
+		public LocalTime getTime()
+		{
+			LocalTime dummyTime = new LocalTime();
+			int hour = dummyTime.getHourOfDay();
+			int minutes = dummyTime.getMinuteOfHour() + 2;
+			return new LocalTime(hour, minutes);
+		}
 	}
 }
-
-
