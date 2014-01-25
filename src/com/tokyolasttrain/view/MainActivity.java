@@ -22,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tokyolasttrain.R;
+import com.tokyolasttrain.api.HyperdiaApi;
+import com.tokyolasttrain.api.HyperdiaApi.LastRoute;
 import com.tokyolasttrain.control.Planner;
 import com.tokyolasttrain.control.Planner.Station;
 
@@ -218,8 +220,14 @@ public class MainActivity extends Activity
 	
 	private void ShowResult()
 	{
-		// DUMMY LAST TRAIN
 		
+		Planner planner = Planner.getInstance(getApplicationContext());
+		HyperdiaApi api = new HyperdiaApi();
+		
+		LastRoute route = api.GetLastRouteFor(planner.getStation(Station.Origin), planner.getStation(Station.Destination));
+		
+		
+		// DUMMY LAST TRAIN
 		Calendar calendar = Calendar.getInstance();
 		int hours = calendar.get(Calendar.HOUR);
 		int minutes = calendar.get(Calendar.MINUTE) + 3;
