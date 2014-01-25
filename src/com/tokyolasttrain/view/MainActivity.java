@@ -1,8 +1,9 @@
 package com.tokyolasttrain.view;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
+import org.joda.time.LocalTime;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -218,22 +219,18 @@ public class MainActivity extends Activity
 	
 	private void ShowResult()
 	{
-		Calendar calendar = Calendar.getInstance();
+		LocalTime currentTime = new LocalTime();
 		
 		// DUMMY LAST TRAIN
-		int hours = calendar.get(Calendar.HOUR);
-		int minutes = calendar.get(Calendar.MINUTE) + 2;
+		int hour = currentTime.getHourOfDay();
+		int minutes = currentTime.getMinuteOfHour() + 2;
+		LocalTime lastTrainTime = new LocalTime(hour, minutes);
 		// DUMMY LAST TRAIN
 		
-		_time.setText(String.format("%02d:%02d", hours, minutes));
+		_time.setText(String.format("%02d:%02d", currentTime.getHourOfDay(), currentTime.getMinuteOfHour()));
 		
-		int currentHours = calendar.get(Calendar.HOUR);
-		int currentMinutes = calendar.get(Calendar.MINUTE);
-		int currentSeconds = calendar.get(Calendar.SECOND);
-		
-		int millisLeft = (hours - currentHours) * 60 * 60 * 1000 + (minutes - currentMinutes) * 60 * 1000 + (60 - currentSeconds) * 1000;
-		
-		new CountDownTimer(millisLeft, 1000)
+		int millisecondsLeft = lastTrainTime.getMillisOfDay() - currentTime.getMillisOfDay();
+		new CountDownTimer(millisecondsLeft, 1000)
 		{
 		     public void onTick(long millisUntilFinished)
 		     {
