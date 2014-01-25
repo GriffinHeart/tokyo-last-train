@@ -219,6 +219,7 @@ public class MainActivity extends Activity
 	private void ShowResult()
 	{
 		// DUMMY LAST TRAIN
+		
 		Calendar calendar = Calendar.getInstance();
 		int hours = calendar.get(Calendar.HOUR);
 		int minutes = calendar.get(Calendar.MINUTE) + 3;
