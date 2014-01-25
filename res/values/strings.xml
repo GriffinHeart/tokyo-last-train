@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Tokyo Last Train</string>
+    <string name="where_are_you">Where are you?</string>
+    <string name="where_are_you_going">Where are you going?</string>
+
+    <string name="desc"></string>
+    
+</resources>
