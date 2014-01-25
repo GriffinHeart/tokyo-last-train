@@ -130,7 +130,7 @@ public class MainActivity extends Activity
 	
 	private void processSingleInput(TextView textView, Station station, Station otherStation)
 	{
-		String stationName = textView.getText().toString().replaceAll("\\s","").toLowerCase(Locale.US);
+		String stationName = textView.getText().toString().toLowerCase(Locale.US);
 		
 		if (Planner.getInstance(getApplicationContext()).setStation(station, stationName))
 		{
@@ -196,8 +196,8 @@ public class MainActivity extends Activity
 	
 	private void processInput(TextView originTextView, TextView destinationTextView)
 	{
-		String originStationName = originTextView.getText().toString().replaceAll("\\s","").toLowerCase(Locale.US);
-		String destinationStationName = destinationTextView.getText().toString().replaceAll("\\s","").toLowerCase(Locale.US);
+		String originStationName = originTextView.getText().toString().toLowerCase(Locale.US);
+		String destinationStationName = destinationTextView.getText().toString().toLowerCase(Locale.US);
 		
 		if (!Planner.getInstance(getApplicationContext()).setStation(Station.Origin, originStationName))
 		{

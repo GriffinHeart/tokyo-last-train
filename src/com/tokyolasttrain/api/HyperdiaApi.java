@@ -5,7 +5,6 @@ import java.net.URLEncoder;
 
 import org.joda.time.DateTime;
 
-
 public class HyperdiaApi {
 
 	public static String URL_FORMAT = 
