@@ -12,6 +12,7 @@
         android:layout_centerVertical="true" />
 
     <ImageView
+        android:id="@+id/splash_img"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"

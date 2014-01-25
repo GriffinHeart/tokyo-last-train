@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.Window;
 import android.view.WindowManager;
@@ -31,8 +32,6 @@ public class MainActivity extends Activity
 	private View _resultLayout;
 	private TextView _time, _timer;
 	
-	private long elapsedTime;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -54,6 +53,8 @@ public class MainActivity extends Activity
 		_destinationTextView.setOnItemClickListener(DestinationTextView_OnItemClick);
 		_destinationTextView.setOnKeyListener(DestinationTextView_OnKey);
 		
+		findViewById(R.id.submit_button).setOnClickListener(SubmitButton_OnClick);
+		
 		_time = (TextView) findViewById(R.id.time);
 		_timer = (TextView) findViewById(R.id.timer);
 		_resultLayout = findViewById(R.id.result_layout);
@@ -64,7 +65,7 @@ public class MainActivity extends Activity
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 		{
-			processInput(view, Station.Origin, Station.Destination);
+			processInput((TextView) view, Station.Origin, Station.Destination);
 		}
 	};
 	
@@ -73,7 +74,7 @@ public class MainActivity extends Activity
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 		{
-			processInput(view, Station.Destination, Station.Origin);
+			processInput((TextView) view, Station.Destination, Station.Origin);
 		}
 	};
 	
@@ -87,7 +88,8 @@ public class MainActivity extends Activity
 						event.getAction() == KeyEvent.ACTION_DOWN &&
 							event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
 			{
-				processInput(view, Station.Origin, Station.Destination);
+				_originTextView.dismissDropDown();
+				processInput((TextView) view, Station.Origin, Station.Destination);
 				return true;
 			}
 			
@@ -105,7 +107,8 @@ public class MainActivity extends Activity
 						event.getAction() == KeyEvent.ACTION_DOWN &&
 							event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
 			{
-				processInput(view, Station.Destination, Station.Origin);
+				_destinationTextView.dismissDropDown();
+				processInput((TextView) view, Station.Destination, Station.Origin);
 				return true;
 			}
 			
@@ -113,9 +116,18 @@ public class MainActivity extends Activity
 		}
 	};
 	
-	private void processInput(View view, Station station, Station otherStation)
+	private OnClickListener SubmitButton_OnClick = new OnClickListener()
+	{	
+		@Override
+		public void onClick(View v)
+		{
+			processInput(_originTextView, _destinationTextView);
+		}
+	};
+	
+	private void processInput(TextView textView, Station station, Station otherStation)
 	{
-		String stationName = ((TextView) view).getText().toString().replaceAll("\\s","").toLowerCase(Locale.US);
+		String stationName = textView.getText().toString().replaceAll("\\s","").toLowerCase(Locale.US);
 		
 		if (Planner.getInstance(getApplicationContext()).setStation(station, stationName))
 		{
@@ -179,6 +191,31 @@ public class MainActivity extends Activity
 		}
 	}
 	
+	private void processInput(TextView originTextView, TextView destinationTextView)
+	{
+		String originStationName = originTextView.getText().toString().replaceAll("\\s","").toLowerCase(Locale.US);
+		String destinationStationName = destinationTextView.getText().toString().replaceAll("\\s","").toLowerCase(Locale.US);
+		
+		if (!Planner.getInstance(getApplicationContext()).setStation(Station.Origin, originStationName))
+		{
+			_originTextView.requestFocus();
+			_originTextView.selectAll();
+		
+			Toast.makeText(getApplicationContext(), "ERROR: Invalid station!", Toast.LENGTH_LONG).show();
+		}				
+		else if (!Planner.getInstance(getApplicationContext()).setStation(Station.Destination, destinationStationName))
+		{
+			_destinationTextView.requestFocus();
+			_destinationTextView.selectAll();
+		
+			Toast.makeText(getApplicationContext(), "ERROR: Invalid station!", Toast.LENGTH_LONG).show();
+		}
+		else
+		{
+			ShowResult();
+		}
+	}
+	
 	private void ShowResult()
 	{
 		// DUMMY LAST TRAIN
@@ -187,29 +224,25 @@ public class MainActivity extends Activity
 		int minutes = calendar.get(Calendar.MINUTE) + 3;
 		// DUMMY LAST TRAIN
 		
-		_time.setText(hours + ":" + minutes);
+		_time.setText(String.format("%02d:%02d", hours, minutes));
+		
+		new CountDownTimer(30000, 1000) {
+
+		     public void onTick(long millisUntilFinished)
+		     {
+		    	 int seconds = (int) (millisUntilFinished / 1000) % 60 ;
+		    	 int minutes = (int) ((millisUntilFinished / (1000 * 60)) % 60);
+		    	 int hours   = (int) ((millisUntilFinished / (1000 * 60 * 60)) % 24);
+		    	 
+		         _timer.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+		     }
+
+		     public void onFinish()
+		     {
+		    	 _timer.setText("MISSED!");
+		     }
+		  }.start();
 		
 		_resultLayout.setVisibility(View.VISIBLE);
 	}
-	
-	public class MyTimer extends CountDownTimer
-    {
-		public MyTimer(long millisInFuture, long countDownInterval)
-		{
-			super(millisInFuture, countDownInterval);
-			// TODO Auto-generated constructor stub
-		}
-
-		@Override
-		public void onFinish()
-		{
-			// TODO Auto-generated method stub
-		}
-
-		@Override
-		public void onTick(long millisUntilFinished)
-		{
-			// TODO Auto-generated method stub
-		}
-    }
 }
