@@ -17,7 +17,7 @@ public class Reader
 		String json = null;
 		try
 		{
-			InputStream inputStream = context.getAssets().open("stations.json");
+			InputStream inputStream = context.getAssets().open("stations_all.json");
 
 			int size = inputStream.available();
 			byte[] buffer = new byte[size];

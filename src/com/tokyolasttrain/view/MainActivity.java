@@ -65,7 +65,7 @@ public class MainActivity extends Activity
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 		{
-			processInput((TextView) view, Station.Origin, Station.Destination);
+			processSingleInput((TextView) view, Station.Origin, Station.Destination);
 		}
 	};
 	
@@ -74,7 +74,7 @@ public class MainActivity extends Activity
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 		{
-			processInput((TextView) view, Station.Destination, Station.Origin);
+			processSingleInput((TextView) view, Station.Destination, Station.Origin);
 		}
 	};
 	
@@ -89,7 +89,7 @@ public class MainActivity extends Activity
 							event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
 			{
 				_originTextView.dismissDropDown();
-				processInput((TextView) view, Station.Origin, Station.Destination);
+				processSingleInput((TextView) view, Station.Origin, Station.Destination);
 				return true;
 			}
 			
@@ -108,7 +108,7 @@ public class MainActivity extends Activity
 							event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
 			{
 				_destinationTextView.dismissDropDown();
-				processInput((TextView) view, Station.Destination, Station.Origin);
+				processSingleInput((TextView) view, Station.Destination, Station.Origin);
 				return true;
 			}
 			
@@ -125,7 +125,7 @@ public class MainActivity extends Activity
 		}
 	};
 	
-	private void processInput(TextView textView, Station station, Station otherStation)
+	private void processSingleInput(TextView textView, Station station, Station otherStation)
 	{
 		String stationName = textView.getText().toString().replaceAll("\\s","").toLowerCase(Locale.US);
 		
@@ -218,16 +218,23 @@ public class MainActivity extends Activity
 	
 	private void ShowResult()
 	{
-		// DUMMY LAST TRAIN
 		Calendar calendar = Calendar.getInstance();
+		
+		// DUMMY LAST TRAIN
 		int hours = calendar.get(Calendar.HOUR);
-		int minutes = calendar.get(Calendar.MINUTE) + 3;
+		int minutes = calendar.get(Calendar.MINUTE) + 2;
 		// DUMMY LAST TRAIN
 		
 		_time.setText(String.format("%02d:%02d", hours, minutes));
 		
-		new CountDownTimer(30000, 1000) {
-
+		int currentHours = calendar.get(Calendar.HOUR);
+		int currentMinutes = calendar.get(Calendar.MINUTE);
+		int currentSeconds = calendar.get(Calendar.SECOND);
+		
+		int millisLeft = (hours - currentHours) * 60 * 60 * 1000 + (minutes - currentMinutes) * 60 * 1000 + (60 - currentSeconds) * 1000;
+		
+		new CountDownTimer(millisLeft, 1000)
+		{
 		     public void onTick(long millisUntilFinished)
 		     {
 		    	 int seconds = (int) (millisUntilFinished / 1000) % 60 ;
