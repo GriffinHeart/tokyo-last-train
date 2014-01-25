@@ -8,7 +8,6 @@ import org.joda.time.LocalTime;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -39,8 +38,6 @@ public class MainActivity extends Activity
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
-		Log.d("TokyoLastTrain", "Create Main Activity");
-		
 		super.onCreate(savedInstanceState);
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -133,18 +130,17 @@ public class MainActivity extends Activity
 	
 	private void processSingleInput(TextView textView, Station station, Station otherStation)
 	{
+		Planner planner = Planner.getInstance(getApplicationContext());
+		
 		String stationName = textView.getText().toString().toLowerCase(Locale.US);
 		
-		if (Planner.getInstance(getApplicationContext()).setStation(station, stationName))
+		if (planner.setStation(station, stationName))
 		{
-			if (Planner.getInstance(getApplicationContext()).hasSetStation(otherStation))
+			if (planner.hasSetStation(otherStation))
 			{
-				if (!Planner.getInstance(getApplicationContext()).getStation(station).equals(Planner.getInstance(getApplicationContext()).getStation(otherStation)))
+				if (!planner.getStation(station).equals(Planner.getInstance(getApplicationContext()).getStation(otherStation)))
 				{
-					if (Planner.getInstance(getApplicationContext()).getRoute())
-					{
-						ShowResult();
-					}
+					ShowResult();
 				}
 				else
 				{
@@ -199,17 +195,19 @@ public class MainActivity extends Activity
 	
 	private void processInput(TextView originTextView, TextView destinationTextView)
 	{
+		Planner planner = Planner.getInstance(getApplicationContext());
+		
 		String originStationName = originTextView.getText().toString().toLowerCase(Locale.US);
 		String destinationStationName = destinationTextView.getText().toString().toLowerCase(Locale.US);
 		
-		if (!Planner.getInstance(getApplicationContext()).setStation(Station.Origin, originStationName))
+		if (!planner.setStation(Station.Origin, originStationName))
 		{
 			_originTextView.requestFocus();
 			_originTextView.selectAll();
 		
 			Toast.makeText(getApplicationContext(), "ERROR: Invalid station!", Toast.LENGTH_LONG).show();
 		}				
-		else if (!Planner.getInstance(getApplicationContext()).setStation(Station.Destination, destinationStationName))
+		else if (!planner.setStation(Station.Destination, destinationStationName))
 		{
 			_destinationTextView.requestFocus();
 			_destinationTextView.selectAll();
@@ -224,20 +222,16 @@ public class MainActivity extends Activity
 	
 	private void ShowResult()
 	{
-		LocalTime currentTime = new LocalTime();
 		Planner planner = Planner.getInstance(getApplicationContext());
 		HyperdiaApi api = new HyperdiaApi();
 		
+		// TODO: AsyncTask call
 		LastRoute route = api.GetLastRouteFor(planner.getStation(Station.Origin), planner.getStation(Station.Destination));
-		// DUMMY LAST TRAIN
-		int hour = currentTime.getHourOfDay();
-		int minutes = currentTime.getMinuteOfHour() + 2;
-		LocalTime lastTrainTime = new LocalTime(hour, minutes);
-		// DUMMY LAST TRAIN
 		
+		LocalTime currentTime = new LocalTime();
 		_time.setText(String.format("%02d:%02d", currentTime.getHourOfDay(), currentTime.getMinuteOfHour()));
 		
-		int millisecondsLeft = lastTrainTime.getMillisOfDay() - currentTime.getMillisOfDay();
+		int millisecondsLeft = route.getTime().getMillisOfDay() - currentTime.getMillisOfDay();
 		new CountDownTimer(millisecondsLeft, 1000)
 		{
 		     public void onTick(long millisUntilFinished)

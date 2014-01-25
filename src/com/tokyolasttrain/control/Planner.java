@@ -86,11 +86,6 @@ public class Planner
 		}
 	}
 	
-	public boolean getRoute()
-	{
-		return true;
-	}
-	
 	private boolean isStationValid(String station)
 	{
 		return _stations.containsKey(station) ? true : false;

@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 
 public class HyperdiaApi {
 
@@ -36,9 +37,24 @@ public class HyperdiaApi {
 		return new LastRoute();
 	}
 	
-	public class LastRoute {
+	public class LastRoute
+	{
+		public String getStation()
+		{
+			return "Shinjuku (JR)";
+		}
 		
+		public String getLine()
+		{
+			return "Yamanote Line";
+		}
+		
+		public LocalTime getTime()
+		{
+			LocalTime dummyTime = new LocalTime();
+			int hour = dummyTime.getHourOfDay();
+			int minutes = dummyTime.getMinuteOfHour() + 2;
+			return new LocalTime(hour, minutes);
+		}
 	}
 }
-
-
