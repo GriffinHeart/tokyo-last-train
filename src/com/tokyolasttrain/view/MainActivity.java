@@ -273,7 +273,7 @@ public class MainActivity extends Activity
 		LocalTime currentTime = new LocalTime();
 		_time.setText(String.format("%02d:%02d", currentTime.getHourOfDay(), currentTime.getMinuteOfHour()));
 		
-		int millisecondsLeft = route.getTime().getMillisOfDay() - currentTime.getMillisOfDay();
+		int millisecondsLeft = route.getDepartureTime().getMillisOfDay() - currentTime.getMillisOfDay();
 		new CountDownTimer(millisecondsLeft, 1000)
 		{
 		     public void onTick(long millisUntilFinished)

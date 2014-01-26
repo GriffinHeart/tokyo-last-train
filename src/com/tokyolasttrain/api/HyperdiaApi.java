@@ -29,7 +29,9 @@ public class HyperdiaApi {
 		DateTime threeamDate = new DateTime().withHourOfDay(3).withMinuteOfHour(0);
 		Interval betweenInterval = new Interval(midnightDate, threeamDate);
 		
-		if(betweenInterval.contains(currentDate)) {
+		boolean isInSameDay = betweenInterval.contains(currentDate);
+		
+		if(isInSameDay) {
 			currentDate = currentDate.minusDays(1).withHourOfDay(23).withMinuteOfHour(00);
 		}
 		
@@ -49,58 +51,86 @@ public class HyperdiaApi {
 			
 			requestRoute(query);
 			
-			return new LastRoute();
+			if(!isInSameDay) {
+				lastRoute.setDepartureTime(lastRoute.getDepartureTime().plusDays(1));
+			}
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			// nothing to do for now
 		} 
 		
-		return null;
+		return lastRoute;
 	}
 	
 	private void requestRoute(String query) {
 		
 		try {
 			Document document = Jsoup.connect(query).get();
-			Elements elements = document.select("table.route_table > tbody > tr");
+			Elements elements = document.select("table.route_table > tbody > tr > td > div");
+			
+			// time
+			String fromTime = elements.get(0).text();
+			
+			// station
+			String fromStation = elements.get(1).text();
+			
+			// line
+			String line = elements.get(3).text();
 			
 			
+
+			lastRoute = new LastRoute();
+			lastRoute.setStation(fromStation);
+			lastRoute.setLine(line);
 			
-			//from
-			Element fromTrElement = elements.get(0);
-			// Line
-			Element lineTrElement = elements.get(2);
+			String[] results = fromTime.split(":");
+			DateTime departureTime = new DateTime();
+			departureTime.withHourOfDay(Integer.parseInt(results[0]));
+			departureTime.withMinuteOfHour(Integer.parseInt(results[1]));
+			lastRoute.setDepartureTime(departureTime);
 			
 			//destination
-			Element destinationTrElement = elements.get(elements.size()-2);
+			//Element destinationTrElement = elements.get(elements.size()-2);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
 	}
 
 	
 	public class LastRoute
 	{
-		public String getStation()
-		{
-			return "Shinjuku (JR)";
+		
+		private String station;
+		
+		private String line;
+		
+		private DateTime departureTime;
+
+		public String getStation() {
+			return station;
+		}
+
+		public void setStation(String station) {
+			this.station = station;
+		}
+
+		public String getLine() {
+			return line;
+		}
+
+		public void setLine(String line) {
+			this.line = line;
+		}
+
+		public DateTime getDepartureTime() {
+			return departureTime;
+		}
+
+		public void setDepartureTime(DateTime departureTime) {
+			this.departureTime = departureTime;
 		}
 		
-		public String getLine()
-		{
-			return "Yamanote Line";
-		}
-		
-		public LocalTime getTime()
-		{
-			LocalTime dummyTime = new LocalTime();
-			int hour = dummyTime.getHourOfDay();
-			int minutes = dummyTime.getMinuteOfHour() + 2;
-			return new LocalTime(hour, minutes);
-		}
 	}
 }
