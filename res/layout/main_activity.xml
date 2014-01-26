@@ -114,13 +114,15 @@
 	        android:layout_width="match_parent"
 	        android:layout_height="0dp"
 	        android:layout_weight="1"
+	        android:layout_marginTop="30dp"
+	        android:layout_marginBottom="50dp"
 	        android:gravity="center" >
 	    
 		    <Button
 		        android:id="@+id/ok_button"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:background="@drawable/btn_ok" />
+		        android:background="@drawable/ic_ok" />
 	    
 		    <ProgressBar
 		        android:id="@+id/loading_layout"
@@ -130,9 +132,9 @@
 		        android:visibility="gone" />
 		    
 		    <LinearLayout
-		        android:id="@+id/result_layout"
+		        android:id="@+id/last_train_layout"
 		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
+		        android:layout_height="match_parent"
 		        android:orientation="vertical"
 		        android:visibility="gone" >
 		        
@@ -161,8 +163,31 @@
 		            style="@style/ResultFont" />
 	        
 	    	</LinearLayout>
-
+	    	
+		    <LinearLayout
+		        android:id="@+id/missed_train_layout"
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:orientation="vertical"
+		        android:gravity="center_horizontal"
+		        android:visibility="gone" >
+		        
+		        <ImageView
+			        android:layout_width="wrap_content"
+			        android:layout_height="0dp"
+			        android:layout_weight="1"
+			        android:src="@drawable/ic_missed_train"
+			        android:contentDescription="@string/desc" />
+		        
+		        <TextView
+			        android:id="@+id/label_missed_train"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:text="@string/missed_train"
+			        android:gravity="center"
+			        style="@style/ResultFont" />
+	        
+	    	</LinearLayout>
 	    </RelativeLayout>
 	</LinearLayout>
-    
 </RelativeLayout>
