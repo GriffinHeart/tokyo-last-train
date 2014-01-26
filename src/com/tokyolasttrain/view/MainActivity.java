@@ -6,6 +6,7 @@ import java.util.Locale;
 import org.joda.time.LocalTime;
 
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.KeyEvent;
@@ -61,6 +62,14 @@ public class MainActivity extends Activity
 		_time = (TextView) findViewById(R.id.time);
 		_timer = (TextView) findViewById(R.id.timer);
 		_resultLayout = findViewById(R.id.result_layout);
+		
+		// Set font
+		Typeface font = Typeface.createFromAsset(getAssets(), "fonts/KozGoPr6N-Light.otf");
+		((TextView) findViewById(R.id.label_title)).setTypeface(font);
+		((TextView) findViewById(R.id.label_origin)).setTypeface(font);
+		_originTextView.setTypeface(font);
+		((TextView) findViewById(R.id.label_destination)).setTypeface(font);
+		_destinationTextView.setTypeface(font);
 	}
 	
 	private OnItemClickListener OriginTextView_OnItemClick = new OnItemClickListener()

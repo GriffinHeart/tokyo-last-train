@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
@@ -15,6 +15,39 @@
 
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+    
+    <style name="TitleFont">
+        <item name="android:textSize">36sp</item>
+        <item name="android:textColor">#FF0000</item>
+        <item name="android:shadowColor">#000000</item>
+    	<item name="android:shadowRadius">10</item>
+    	<item name="android:shadowDx">-2</item>
+    	<item name="android:shadowDy">2</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:paddingTop">40dp</item>
+    </style>
+    
+    <style name="LabelFont" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#FF0000</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:shadowColor">#000000</item>
+    	<item name="android:shadowRadius">10</item>
+    	<item name="android:shadowDx">-2</item>
+    	<item name="android:shadowDy">2</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingLeft">8dp</item>
+    </style>
+    
+    <style name="StationTextView" parent="@android:style/TextAppearance.Medium">
+        <item name="android:completionThreshold">2</item>
+		<item name="android:singleLine">true</item>
+		<item name="android:selectAllOnFocus">true</item>
+		<item name="android:layout_marginLeft">30dp</item>
+		<item name="android:paddingLeft">4dp</item>
+		<item name="android:paddingRight">4dp</item>
+		<item name="android:background">@drawable/bg_textview</item>
     </style>
 
 </resources>
