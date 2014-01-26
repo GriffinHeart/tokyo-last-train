@@ -9,6 +9,7 @@ import org.joda.time.Interval;
 import org.joda.time.LocalTime;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 
@@ -61,8 +62,18 @@ public class HyperdiaApi {
 		
 		try {
 			Document document = Jsoup.connect(query).get();
-			Elements element = document.select("table.route_table > tbody > tr > td > div");
-			String time = element.first().text();
+			Elements elements = document.select("table.route_table > tbody > tr");
+			
+			
+			
+			//from
+			Element fromTrElement = elements.get(0);
+			// Line
+			Element lineTrElement = elements.get(2);
+			
+			//destination
+			Element destinationTrElement = elements.get(elements.size()-2);
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
