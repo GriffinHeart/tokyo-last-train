@@ -9,7 +9,7 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:scaleType="centerCrop"
-        android:background="@drawable/_ref2"
+        android:background="@drawable/background"
         android:contentDescription="@string/desc" />
     
     <LinearLayout
@@ -67,10 +67,10 @@
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_marginTop="30dp"
-	        android:orientation="horizontal"
-	        android:gravity="center_vertical"
 	        android:paddingLeft="30dp"
-	        android:paddingRight="30dp" >
+	        android:paddingRight="30dp"
+	        android:orientation="horizontal"
+	        android:gravity="center_vertical" >
 	    
 	        <ImageView
 	            android:id="@+id/ic_destination"
@@ -131,34 +131,34 @@
 		    
 		    <LinearLayout
 		        android:id="@+id/result_layout"
-		        android:layout_width="wrap_content"
+		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        android:orientation="vertical"
 		        android:visibility="gone" >
 		        
 		        <TextView
-			        android:id="@+id/station"
+			        android:id="@+id/label_station"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
-			        android:textSize="40sp" />
+			        style="@style/ResultFont" />
 		        
 		        <TextView
-			        android:id="@+id/line"
+			        android:id="@+id/label_line"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
-			        android:textSize="40sp" />
+			        style="@style/ResultFont" />
 		        
 		        <TextView
-			        android:id="@+id/time"
+			        android:id="@+id/label_departure_time"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
-			        android:textSize="40sp" />
+			        style="@style/ResultFont" />
 		
 		        <TextView
-		            android:id="@+id/timer"
+		            android:id="@+id/label_timer"
 		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
-		            android:textSize="70sp" />
+		            style="@style/ResultFont" />
 	        
 	    	</LinearLayout>
 

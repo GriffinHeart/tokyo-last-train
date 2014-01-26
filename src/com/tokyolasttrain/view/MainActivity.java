@@ -3,6 +3,7 @@ package com.tokyolasttrain.view;
 import java.util.List;
 import java.util.Locale;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
 import android.app.Activity;
@@ -40,7 +41,7 @@ public class MainActivity extends Activity
 	private Button _btnOk;
 	private ProgressBar _loadingLayout;
 	private View _resultLayout;
-	private TextView _time, _timer;
+	private TextView _labelStation, _labelLine, _labelDepartureTime, _labelTimer;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -67,8 +68,11 @@ public class MainActivity extends Activity
 		
 		_loadingLayout = (ProgressBar) findViewById(R.id.loading_layout);	//.addView(new GifWebView(this, "file:///android_asset/loading_animation.gif"));
 		_resultLayout = findViewById(R.id.result_layout);
-		_time = (TextView) findViewById(R.id.time);
-		_timer = (TextView) findViewById(R.id.timer);
+		
+		_labelStation = (TextView) findViewById(R.id.label_station);
+		_labelLine = (TextView) findViewById(R.id.label_line);
+		_labelDepartureTime = (TextView) findViewById(R.id.label_departure_time);
+		_labelTimer = (TextView) findViewById(R.id.label_timer);
 		
 		// Set font
 		Typeface font = Typeface.createFromAsset(getAssets(), "fonts/KozGoPr6N-Light.otf");
@@ -77,6 +81,10 @@ public class MainActivity extends Activity
 		_originTextView.setTypeface(font);
 		((TextView) findViewById(R.id.label_destination)).setTypeface(font);
 		_destinationTextView.setTypeface(font);
+		_labelStation.setTypeface(font);
+		_labelLine.setTypeface(font);
+		_labelDepartureTime.setTypeface(font);
+		_labelTimer.setTypeface(font);
 	}
 	
 	private OnItemClickListener OriginTextView_OnItemClick = new OnItemClickListener()
@@ -270,10 +278,13 @@ public class MainActivity extends Activity
 	
 	private void onGotResults(LastRoute route)
 	{
-		LocalTime currentTime = new LocalTime();
-		_time.setText(String.format("%02d:%02d", currentTime.getHourOfDay(), currentTime.getMinuteOfHour()));
+		_labelStation.setText(route.getStation());
+		_labelLine.setText(route.getLine());
 		
-		int millisecondsLeft = route.getDepartureTime().getMillisOfDay() - currentTime.getMillisOfDay();
+		DateTime departureTime = route.getDepartureTime();
+		_labelDepartureTime.setText(String.format("%02d:%02d", departureTime.getHourOfDay(), departureTime.getMinuteOfHour()));
+		
+		int millisecondsLeft = departureTime.getMillisOfDay() - new LocalTime().getMillisOfDay();
 		new CountDownTimer(millisecondsLeft, 1000)
 		{
 		     public void onTick(long millisUntilFinished)
@@ -282,16 +293,16 @@ public class MainActivity extends Activity
 		    	 int minutes = (int) ((millisUntilFinished / (1000 * 60)) % 60);
 		    	 int hours   = (int) ((millisUntilFinished / (1000 * 60 * 60)) % 24);
 		    	 
-		         _timer.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+		         _labelTimer.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
 		     }
 
 		     public void onFinish()
 		     {
-		    	 _timer.setText("MISSED!");
+		    	 // TODO: Changed to missed layout
 		     }
 		  }.start();
 		
 		 _loadingLayout.setVisibility(View.GONE);
-		_resultLayout.setVisibility(View.VISIBLE);
+		 _resultLayout.setVisibility(View.VISIBLE);
 	}
 }

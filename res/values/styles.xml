@@ -28,16 +28,23 @@
         <item name="android:paddingTop">40dp</item>
     </style>
     
-    <style name="LabelFont" parent="@android:style/TextAppearance.Medium">
+    <style name="LabelFont" parent="@style/ResultFont">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingLeft">8dp</item>
+    </style>
+    
+    <style name="TimerFont" parent="@style/ResultFont">
+        <item name="android:textSize">50sp</item>
+    </style>
+    
+    <style name="ResultFont">
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">#FF0000</item>
-        <item name="android:textAllCaps">true</item>
         <item name="android:shadowColor">#000000</item>
     	<item name="android:shadowRadius">10</item>
     	<item name="android:shadowDx">-2</item>
     	<item name="android:shadowDy">2</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:paddingLeft">8dp</item>
     </style>
     
     <style name="StationTextView" parent="@android:style/TextAppearance.Medium">
