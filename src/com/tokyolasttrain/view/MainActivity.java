@@ -23,8 +23,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tokyolasttrain.R;
+import com.tokyolasttrain.api.FetchLastRoute;
 import com.tokyolasttrain.api.HyperdiaApi;
 import com.tokyolasttrain.api.HyperdiaApi.LastRoute;
+import com.tokyolasttrain.api.NetworkTask.OnCompleteListener;
+import com.tokyolasttrain.api.NetworkTask.OnExceptionListener;
 import com.tokyolasttrain.control.Planner;
 import com.tokyolasttrain.control.Planner.Station;
 
@@ -223,11 +226,33 @@ public class MainActivity extends Activity
 	private void ShowResult()
 	{
 		Planner planner = Planner.getInstance(getApplicationContext());
-		HyperdiaApi api = new HyperdiaApi();
 		
-		// TODO: AsyncTask call
-		LastRoute route = api.GetLastRouteFor(planner.getStation(Station.Origin), planner.getStation(Station.Destination));
+		FetchLastRoute fetchLastRoute = new FetchLastRoute();
+		fetchLastRoute.setOriginStation(planner.getStation(Station.Origin));
+		fetchLastRoute.setDestinationStation(planner.getStation(Station.Destination));
 		
+		fetchLastRoute.setOnCompleteListener(new OnCompleteListener<HyperdiaApi.LastRoute>() {
+
+			@Override
+			public void onComplete(LastRoute result) { 
+				//TODO stop the loading and display the results
+				onGotResults(result);
+			}
+		});
+		
+		fetchLastRoute.setOnGenericExceptionListener(new OnExceptionListener() {
+			@Override
+			public void onException(Exception exception) {
+				// TODO present generic error message
+			}
+		});
+		
+		//TODO set the loading
+		fetchLastRoute.execute();
+		
+	}
+	
+	private void onGotResults(LastRoute route) {
 		LocalTime currentTime = new LocalTime();
 		_time.setText(String.format("%02d:%02d", currentTime.getHourOfDay(), currentTime.getMinuteOfHour()));
 		
