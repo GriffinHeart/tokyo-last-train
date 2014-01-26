@@ -3,7 +3,6 @@ package com.tokyolasttrain.view;
 import java.util.List;
 import java.util.Locale;
 
-import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
 import android.app.Activity;
@@ -21,7 +20,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -34,6 +32,7 @@ import com.tokyolasttrain.api.HyperdiaApi;
 import com.tokyolasttrain.api.HyperdiaApi.LastRoute;
 import com.tokyolasttrain.api.NetworkTask.OnCompleteListener;
 import com.tokyolasttrain.api.NetworkTask.OnExceptionListener;
+import com.tokyolasttrain.control.ArrayAutoCompleteAdapter;
 import com.tokyolasttrain.control.Planner;
 import com.tokyolasttrain.control.Planner.Station;
 
@@ -43,7 +42,7 @@ public class MainActivity extends Activity
 	private Button _btnOk;
 	private ProgressBar _loadingLayout;
 	private View _lastTrainLayout, _missedTrainLayout;
-	private TextView _labelStation, _labelLine, _labelDepartureTime, _labelTimer;
+	private TextView _time, _timer;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -57,12 +56,13 @@ public class MainActivity extends Activity
 		List<String> stations = Planner.getInstance(getApplicationContext()).getStationList();
 		
 		_originTextView = (AutoCompleteTextView) findViewById(R.id.textview_origin);
-		_originTextView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, stations));
+		
+		_originTextView.setAdapter(new ArrayAutoCompleteAdapter<String>(this, android.R.layout.select_dialog_item, stations));
 		_originTextView.setOnItemClickListener(OriginTextView_OnItemClick);
 		_originTextView.setOnKeyListener(OriginTextView_OnKey);
 		
 		_destinationTextView = (AutoCompleteTextView) findViewById(R.id.textview_destination);
-		_destinationTextView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, stations));
+		_destinationTextView.setAdapter(new ArrayAutoCompleteAdapter<String>(this, android.R.layout.select_dialog_item, stations));
 		_destinationTextView.setOnItemClickListener(DestinationTextView_OnItemClick);
 		_destinationTextView.setOnKeyListener(DestinationTextView_OnKey);
 		
@@ -71,11 +71,8 @@ public class MainActivity extends Activity
 		_loadingLayout = (ProgressBar) findViewById(R.id.loading_layout);	//.addView(new GifWebView(this, "file:///android_asset/loading_animation.gif"));
 		_lastTrainLayout = findViewById(R.id.last_train_layout);
 		_missedTrainLayout = findViewById(R.id.missed_train_layout);
-		
-		_labelStation = (TextView) findViewById(R.id.label_station);
-		_labelLine = (TextView) findViewById(R.id.label_line);
-		_labelDepartureTime = (TextView) findViewById(R.id.label_departure_time);
-		_labelTimer = (TextView) findViewById(R.id.label_timer);
+		_time = (TextView) findViewById(R.id.time);
+		_timer = (TextView) findViewById(R.id.timer);
 		
 		// Set font
 		Typeface font = Typeface.createFromAsset(getAssets(), "fonts/KozGoPr6N-Light.otf");
@@ -84,10 +81,6 @@ public class MainActivity extends Activity
 		_originTextView.setTypeface(font);
 		((TextView) findViewById(R.id.label_destination)).setTypeface(font);
 		_destinationTextView.setTypeface(font);
-		_labelStation.setTypeface(font);
-		_labelLine.setTypeface(font);
-		_labelDepartureTime.setTypeface(font);
-		_labelTimer.setTypeface(font);
 		((TextView) findViewById(R.id.label_missed_train)).setTypeface(font);
 	}
 	
@@ -288,13 +281,10 @@ public class MainActivity extends Activity
 	
 	private void onGotResults(LastRoute route)
 	{
-		_labelStation.setText(route.getStation());
-		_labelLine.setText(route.getLine());
+		LocalTime currentTime = new LocalTime();
+		_time.setText(String.format("%02d:%02d", currentTime.getHourOfDay(), currentTime.getMinuteOfHour()));
 		
-		DateTime departureTime = route.getDepartureTime();
-		_labelDepartureTime.setText(String.format("%02d:%02d", departureTime.getHourOfDay(), departureTime.getMinuteOfHour()));
-		
-		int millisecondsLeft = departureTime.getMillisOfDay() - new LocalTime().getMillisOfDay();
+		int millisecondsLeft = route.getDepartureTime().getMillisOfDay() - currentTime.getMillisOfDay();
 		if (millisecondsLeft <= 0)
 		{
 			ShowMissedTrain();
@@ -309,7 +299,7 @@ public class MainActivity extends Activity
 					int minutes = (int) ((millisUntilFinished / (1000 * 60)) % 60);
 					int hours   = (int) ((millisUntilFinished / (1000 * 60 * 60)) % 24);
 
-					_labelTimer.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+		         _timer.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
 				}
 
 				public void onFinish()
