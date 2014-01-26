@@ -160,7 +160,8 @@
 		            android:id="@+id/label_timer"
 		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
-		            style="@style/ResultFont" />
+		            android:layout_gravity="center_horizontal"
+		            style="@style/TimerFont" />
 	        
 	    	</LinearLayout>
 	    	

@@ -45,7 +45,7 @@ public class MainActivity extends Activity
 	private Button _btnOk;
 	private ProgressBar _loadingLayout;
 	private View _lastTrainLayout, _missedTrainLayout;
-	private TextView _time, _timer;
+	private TextView _labelStation, _labelLine, _labelDepartureTime, _labelTimer;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -74,8 +74,11 @@ public class MainActivity extends Activity
 		_loadingLayout = (ProgressBar) findViewById(R.id.loading_layout);	//.addView(new GifWebView(this, "file:///android_asset/loading_animation.gif"));
 		_lastTrainLayout = findViewById(R.id.last_train_layout);
 		_missedTrainLayout = findViewById(R.id.missed_train_layout);
-		_time = (TextView) findViewById(R.id.label_departure_time);
-		_timer = (TextView) findViewById(R.id.label_timer);
+		
+		_labelStation = (TextView) findViewById(R.id.label_station);
+		_labelLine = (TextView) findViewById(R.id.label_line);
+		_labelDepartureTime = (TextView) findViewById(R.id.label_departure_time);
+		_labelTimer = (TextView) findViewById(R.id.label_timer);
 		
 		// Set font
 		Typeface font = Typeface.createFromAsset(getAssets(), "fonts/KozGoPr6N-Light.otf");
@@ -85,6 +88,10 @@ public class MainActivity extends Activity
 		((TextView) findViewById(R.id.label_destination)).setTypeface(font);
 		_destinationTextView.setTypeface(font);
 		((TextView) findViewById(R.id.label_missed_train)).setTypeface(font);
+		_labelStation.setTypeface(font);
+		_labelLine.setTypeface(font);
+		_labelDepartureTime.setTypeface(font);
+		_labelTimer.setTypeface(font);
 	}
 	
 	private OnItemClickListener OriginTextView_OnItemClick = new OnItemClickListener()
@@ -164,9 +171,6 @@ public class MainActivity extends Activity
 			{
 				if (!planner.getStation(station).equals(Planner.getInstance(getApplicationContext()).getStation(otherStation)))
 				{
-					InputMethodManager inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-					inputManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
-					
 					getLastRoute();
 				}
 				else
@@ -243,10 +247,6 @@ public class MainActivity extends Activity
 		}
 		else
 		{
-			InputMethodManager inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-			inputManager.hideSoftInputFromWindow(_originTextView.getWindowToken(), 0);
-			inputManager.hideSoftInputFromWindow(_destinationTextView.getWindowToken(), 0);
-			
 			getLastRoute();
 		}
 	}
@@ -284,9 +284,11 @@ public class MainActivity extends Activity
 	
 	private void onGotResults(LastRoute route)
 	{
-		LocalDateTime departureTime = route.getDepartureTime();
-		_time.setText(String.format("%02d:%02d", departureTime.getHourOfDay(), departureTime.getMinuteOfHour()));
+		_labelStation.setText(route.getStation());
+		_labelLine.setText(route.getLine());
 		
+		LocalDateTime departureTime = route.getDepartureTime();
+		_labelDepartureTime.setText(String.format("%02d:%02d", departureTime.getHourOfDay(), departureTime.getMinuteOfHour()));
 		
 		Interval interval = new Interval(new DateTime(), departureTime.toDateTime());
 		long millisecondsLeft = interval.toDurationMillis();
@@ -304,7 +306,7 @@ public class MainActivity extends Activity
 					int minutes = (int) ((millisUntilFinished / (1000 * 60)) % 60);
 					int hours   = (int) ((millisUntilFinished / (1000 * 60 * 60)) % 24);
 
-					_timer.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+					_labelTimer.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
 				}
 
 				public void onFinish()
