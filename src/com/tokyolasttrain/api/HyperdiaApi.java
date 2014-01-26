@@ -6,13 +6,9 @@ import java.net.URLEncoder;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
-import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 
 public class HyperdiaApi {
 
@@ -20,7 +16,7 @@ public class HyperdiaApi {
 	public static String URL_FORMAT = 
 			"http://www.hyperdia.com/cgi/search/smartphone/android_free/en/hyperdia2.cgi?search_target=route" +
 			"&dep_node=%s&arv_node=%s&via_node01=&via_node02=&via_node03=&year=%s&month=%s&day=%s&hour=%s&minute=%s" +
-			"&search_type=lasttrain&search_way=time&sort=time&max_route=1&sum_target=7";
+			"&search_type=lasttrain&search_way=time&sort=time&max_route=1&sum_target=7"; 
 	
 	public LastRoute lastRoute;
 	
@@ -78,18 +74,17 @@ public class HyperdiaApi {
 			// line
 			String line = elements.get(3).text();
 			
+			
+
 			lastRoute = new LastRoute();
 			lastRoute.setStation(fromStation);
 			lastRoute.setLine(line);
 			
 			String[] results = fromTime.split(":");
-			LocalDateTime departureTime = new LocalDateTime();
-			lastRoute.setDepartureTime(
-					departureTime
-						.withHourOfDay(Integer.parseInt(results[0]))
-						.withMinuteOfHour(Integer.parseInt(results[1]))
-						.withSecondOfMinute(0)
-			);
+			DateTime departureTime = new DateTime();
+			departureTime.withHourOfDay(Integer.parseInt(results[0]));
+			departureTime.withMinuteOfHour(Integer.parseInt(results[1]));
+			lastRoute.setDepartureTime(departureTime);
 			
 			//destination
 			//Element destinationTrElement = elements.get(elements.size()-2);
@@ -108,7 +103,7 @@ public class HyperdiaApi {
 		
 		private String line;
 		
-		private LocalDateTime departureTime;
+		private DateTime departureTime;
 
 		public String getStation() {
 			return station;
@@ -126,11 +121,11 @@ public class HyperdiaApi {
 			this.line = line;
 		}
 
-		public LocalDateTime getDepartureTime() {
+		public DateTime getDepartureTime() {
 			return departureTime;
 		}
 
-		public void setDepartureTime(LocalDateTime departureTime) {
+		public void setDepartureTime(DateTime departureTime) {
 			this.departureTime = departureTime;
 		}
 		
