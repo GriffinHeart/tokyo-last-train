@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 
@@ -286,7 +287,9 @@ public class MainActivity extends Activity
 		LocalDateTime departureTime = route.getDepartureTime();
 		_time.setText(String.format("%02d:%02d", departureTime.getHourOfDay(), departureTime.getMinuteOfHour()));
 		
-		int millisecondsLeft = departureTime.getMillisOfDay() - new LocalTime().getMillisOfDay();
+		
+		Interval interval = new Interval(new DateTime(), departureTime.toDateTime());
+		long millisecondsLeft = interval.toDurationMillis();
 		if (millisecondsLeft <= 0)
 		{
 			ShowMissedTrain();
@@ -301,7 +304,7 @@ public class MainActivity extends Activity
 					int minutes = (int) ((millisUntilFinished / (1000 * 60)) % 60);
 					int hours   = (int) ((millisUntilFinished / (1000 * 60 * 60)) % 24);
 
-		         _timer.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+					_timer.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
 				}
 
 				public void onFinish()
