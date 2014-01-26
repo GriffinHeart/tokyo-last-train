@@ -3,6 +3,8 @@ package com.tokyolasttrain.view;
 import java.util.List;
 import java.util.Locale;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 
 import android.app.Activity;
@@ -71,8 +73,8 @@ public class MainActivity extends Activity
 		_loadingLayout = (ProgressBar) findViewById(R.id.loading_layout);	//.addView(new GifWebView(this, "file:///android_asset/loading_animation.gif"));
 		_lastTrainLayout = findViewById(R.id.last_train_layout);
 		_missedTrainLayout = findViewById(R.id.missed_train_layout);
-		_time = (TextView) findViewById(R.id.time);
-		_timer = (TextView) findViewById(R.id.timer);
+		_time = (TextView) findViewById(R.id.label_departure_time);
+		_timer = (TextView) findViewById(R.id.label_timer);
 		
 		// Set font
 		Typeface font = Typeface.createFromAsset(getAssets(), "fonts/KozGoPr6N-Light.otf");
@@ -281,10 +283,10 @@ public class MainActivity extends Activity
 	
 	private void onGotResults(LastRoute route)
 	{
-		LocalTime currentTime = new LocalTime();
-		_time.setText(String.format("%02d:%02d", currentTime.getHourOfDay(), currentTime.getMinuteOfHour()));
+		LocalDateTime departureTime = route.getDepartureTime();
+		_time.setText(String.format("%02d:%02d", departureTime.getHourOfDay(), departureTime.getMinuteOfHour()));
 		
-		int millisecondsLeft = route.getDepartureTime().getMillisOfDay() - currentTime.getMillisOfDay();
+		int millisecondsLeft = departureTime.getMillisOfDay() - new LocalTime().getMillisOfDay();
 		if (millisecondsLeft <= 0)
 		{
 			ShowMissedTrain();
