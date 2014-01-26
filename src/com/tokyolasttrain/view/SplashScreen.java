@@ -28,7 +28,10 @@ public class SplashScreen extends Activity
   
         setContentView(R.layout.splash_screen);
         
-        ((FrameLayout) findViewById(R.id.splash_animation_layout)).addView(new GifWebView(this, "file:///android_asset/splash_animation.gif", true));
+        GifWebView splashAnimation = new GifWebView(this, "file:///android_asset/splash_animation.gif", true);
+        splashAnimation.setBackgroundColor(getResources().getColor(android.R.color.black));
+        ((FrameLayout) findViewById(R.id.splash_animation_layout)).addView(splashAnimation);
+        
         findViewById(R.id.dismiss_splash_screen).setOnClickListener(new OnClickListener()
         {
 			@Override

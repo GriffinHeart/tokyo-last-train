@@ -14,7 +14,6 @@ public class GifWebView extends WebView
 	public GifWebView(Context context, String path)
 	{
 		super(context);
-		setBackgroundColor(getResources().getColor(android.R.color.black));
 		loadUrl(path);
 	}
 	

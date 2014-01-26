@@ -9,7 +9,7 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:scaleType="centerCrop"
-        android:background="@drawable/background"
+        android:background="@drawable/_ref2"
         android:contentDescription="@string/desc" />
     
     <LinearLayout
@@ -113,43 +113,56 @@
 	    <RelativeLayout 
 	        android:layout_width="match_parent"
 	        android:layout_height="0dp"
-	        android:layout_weight="1" >
+	        android:layout_weight="1"
+	        android:gravity="center" >
 	    
-	    <Button
-	        android:id="@+id/ok_button"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_centerInParent="true"
-	        android:background="@drawable/btn_ok" />
-	    
-	    <FrameLayout
-	        android:id="@+id/loading_layout"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:visibility="gone" />
-	    
-	    <LinearLayout
-	        android:id="@+id/result_layout"
-	        android:layout_width="wrap_content"
-	        android:layout_height="match_parent"
-	        android:orientation="vertical"
-	        android:visibility="gone" >
-	        
-	        <TextView
-		        android:id="@+id/time"
-		        android:layout_width="match_parent"
+		    <Button
+		        android:id="@+id/ok_button"
+		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:gravity="right"
-		        android:textSize="40sp" />
-	
-	        <TextView
-	            android:id="@+id/timer"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:textSize="70sp" />
+		        android:background="@drawable/btn_ok" />
+	    
+		    <ProgressBar
+		        android:id="@+id/loading_layout"
+		        style="?android:attr/progressBarStyleLarge"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:visibility="gone" />
+		    
+		    <LinearLayout
+		        android:id="@+id/result_layout"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:orientation="vertical"
+		        android:visibility="gone" >
+		        
+		        <TextView
+			        android:id="@+id/station"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:textSize="40sp" />
+		        
+		        <TextView
+			        android:id="@+id/line"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:textSize="40sp" />
+		        
+		        <TextView
+			        android:id="@+id/time"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:textSize="40sp" />
+		
+		        <TextView
+		            android:id="@+id/timer"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:textSize="70sp" />
 	        
-	    </LinearLayout>
-	
+	    	</LinearLayout>
+
 	    </RelativeLayout>
 	</LinearLayout>
+    
 </RelativeLayout>

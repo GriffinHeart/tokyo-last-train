@@ -21,7 +21,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,13 +33,12 @@ import com.tokyolasttrain.api.NetworkTask.OnCompleteListener;
 import com.tokyolasttrain.api.NetworkTask.OnExceptionListener;
 import com.tokyolasttrain.control.Planner;
 import com.tokyolasttrain.control.Planner.Station;
-import com.tokyolasttrain.view.util.GifWebView;
 
 public class MainActivity extends Activity
 {
 	private AutoCompleteTextView _originTextView, _destinationTextView;
 	private Button _btnOk;
-	private FrameLayout _loadingLayout;
+	private ProgressBar _loadingLayout;
 	private View _resultLayout;
 	private TextView _time, _timer;
 	
@@ -66,7 +65,7 @@ public class MainActivity extends Activity
 		
 		(_btnOk = (Button) findViewById(R.id.ok_button)).setOnClickListener(OkButton_OnClick);
 		
-		(_loadingLayout = (FrameLayout) findViewById(R.id.loading_layout)).addView(new GifWebView(this, "file:///android_asset/loading_animation.gif", true));
+		_loadingLayout = (ProgressBar) findViewById(R.id.loading_layout);	//.addView(new GifWebView(this, "file:///android_asset/loading_animation.gif"));
 		_resultLayout = findViewById(R.id.result_layout);
 		_time = (TextView) findViewById(R.id.time);
 		_timer = (TextView) findViewById(R.id.timer);
