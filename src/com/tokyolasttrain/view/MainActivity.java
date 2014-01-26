@@ -6,6 +6,7 @@ import java.util.Locale;
 import org.joda.time.LocalTime;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -16,6 +17,7 @@ import android.view.View.OnKeyListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
@@ -39,7 +41,7 @@ public class MainActivity extends Activity
 	private AutoCompleteTextView _originTextView, _destinationTextView;
 	private Button _btnOk;
 	private ProgressBar _loadingLayout;
-	private View _resultLayout;
+	private View _lastTrainLayout, _missedTrainLayout;
 	private TextView _time, _timer;
 	
 	@Override
@@ -67,7 +69,8 @@ public class MainActivity extends Activity
 		(_btnOk = (Button) findViewById(R.id.ok_button)).setOnClickListener(OkButton_OnClick);
 		
 		_loadingLayout = (ProgressBar) findViewById(R.id.loading_layout);	//.addView(new GifWebView(this, "file:///android_asset/loading_animation.gif"));
-		_resultLayout = findViewById(R.id.result_layout);
+		_lastTrainLayout = findViewById(R.id.last_train_layout);
+		_missedTrainLayout = findViewById(R.id.missed_train_layout);
 		_time = (TextView) findViewById(R.id.time);
 		_timer = (TextView) findViewById(R.id.timer);
 		
@@ -78,6 +81,7 @@ public class MainActivity extends Activity
 		_originTextView.setTypeface(font);
 		((TextView) findViewById(R.id.label_destination)).setTypeface(font);
 		_destinationTextView.setTypeface(font);
+		((TextView) findViewById(R.id.label_missed_train)).setTypeface(font);
 	}
 	
 	private OnItemClickListener OriginTextView_OnItemClick = new OnItemClickListener()
@@ -141,7 +145,7 @@ public class MainActivity extends Activity
 		@Override
 		public void onClick(View v)
 		{
-			processInput(_originTextView, _destinationTextView);
+			processInput();
 		}
 	};
 	
@@ -157,6 +161,9 @@ public class MainActivity extends Activity
 			{
 				if (!planner.getStation(station).equals(Planner.getInstance(getApplicationContext()).getStation(otherStation)))
 				{
+					InputMethodManager inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+					inputManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
+					
 					getLastRoute();
 				}
 				else
@@ -210,12 +217,12 @@ public class MainActivity extends Activity
 		}
 	}
 	
-	private void processInput(TextView originTextView, TextView destinationTextView)
+	private void processInput()
 	{
 		Planner planner = Planner.getInstance(getApplicationContext());
 		
-		String originStationName = originTextView.getText().toString().toLowerCase(Locale.US);
-		String destinationStationName = destinationTextView.getText().toString().toLowerCase(Locale.US);
+		String originStationName = _originTextView.getText().toString().toLowerCase(Locale.US);
+		String destinationStationName = _destinationTextView.getText().toString().toLowerCase(Locale.US);
 		
 		if (!planner.setStation(Station.Origin, originStationName))
 		{
@@ -233,6 +240,10 @@ public class MainActivity extends Activity
 		}
 		else
 		{
+			InputMethodManager inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+			inputManager.hideSoftInputFromWindow(_originTextView.getWindowToken(), 0);
+			inputManager.hideSoftInputFromWindow(_destinationTextView.getWindowToken(), 0);
+			
 			getLastRoute();
 		}
 	}
@@ -265,8 +276,7 @@ public class MainActivity extends Activity
 		
 		fetchLastRoute.execute();
 		
-		_btnOk.setVisibility(View.GONE);
-		_loadingLayout.setVisibility(View.VISIBLE);
+		ShowLoading();
 	}
 	
 	private void onGotResults(LastRoute route)
@@ -275,24 +285,62 @@ public class MainActivity extends Activity
 		_time.setText(String.format("%02d:%02d", currentTime.getHourOfDay(), currentTime.getMinuteOfHour()));
 		
 		int millisecondsLeft = route.getDepartureTime().getMillisOfDay() - currentTime.getMillisOfDay();
-		new CountDownTimer(millisecondsLeft, 1000)
+		if (millisecondsLeft <= 0)
 		{
-		     public void onTick(long millisUntilFinished)
-		     {
-		    	 int seconds = (int) (millisUntilFinished / 1000) % 60 ;
-		    	 int minutes = (int) ((millisUntilFinished / (1000 * 60)) % 60);
-		    	 int hours   = (int) ((millisUntilFinished / (1000 * 60 * 60)) % 24);
-		    	 
-		         _timer.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
-		     }
+			ShowMissedTrain();
+		}
+		else
+		{
+			new CountDownTimer(millisecondsLeft, 1000)
+			{
+				public void onTick(long millisUntilFinished)
+				{
+					int seconds = (int) (millisUntilFinished / 1000) % 60 ;
+					int minutes = (int) ((millisUntilFinished / (1000 * 60)) % 60);
+					int hours   = (int) ((millisUntilFinished / (1000 * 60 * 60)) % 24);
 
-		     public void onFinish()
-		     {
-		    	 _timer.setText("MISSED!");
-		     }
-		  }.start();
-		
-		 _loadingLayout.setVisibility(View.GONE);
-		_resultLayout.setVisibility(View.VISIBLE);
+		         _timer.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+				}
+
+				public void onFinish()
+				{
+					ShowMissedTrain();
+				}
+			}.start();
+
+			ShowLastTrain();
+		}
+	}
+	
+	private void ShowOk()
+	{
+		_btnOk.setVisibility(View.VISIBLE);
+		_loadingLayout.setVisibility(View.GONE);
+		_lastTrainLayout.setVisibility(View.GONE);
+		_missedTrainLayout.setVisibility(View.GONE);
+	}
+	
+	private void ShowLoading()
+	{
+		_btnOk.setVisibility(View.GONE);
+		_loadingLayout.setVisibility(View.VISIBLE);
+		_lastTrainLayout.setVisibility(View.GONE);
+		_missedTrainLayout.setVisibility(View.GONE);
+	}
+	
+	private void ShowLastTrain()
+	{
+		_btnOk.setVisibility(View.GONE);
+		_loadingLayout.setVisibility(View.GONE);
+		_lastTrainLayout.setVisibility(View.VISIBLE);
+		_missedTrainLayout.setVisibility(View.GONE);
+	}
+	
+	private void ShowMissedTrain()
+	{
+		_btnOk.setVisibility(View.GONE);
+		_loadingLayout.setVisibility(View.GONE);
+		_lastTrainLayout.setVisibility(View.GONE);
+		_missedTrainLayout.setVisibility(View.VISIBLE);
 	}
 }
