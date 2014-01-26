@@ -31,6 +31,7 @@ import com.tokyolasttrain.api.HyperdiaApi;
 import com.tokyolasttrain.api.HyperdiaApi.LastRoute;
 import com.tokyolasttrain.api.NetworkTask.OnCompleteListener;
 import com.tokyolasttrain.api.NetworkTask.OnExceptionListener;
+import com.tokyolasttrain.control.ArrayAutoCompleteAdapter;
 import com.tokyolasttrain.control.Planner;
 import com.tokyolasttrain.control.Planner.Station;
 
@@ -54,12 +55,13 @@ public class MainActivity extends Activity
 		List<String> stations = Planner.getInstance(getApplicationContext()).getStationList();
 		
 		_originTextView = (AutoCompleteTextView) findViewById(R.id.textview_origin);
-		_originTextView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, stations));
+		
+		_originTextView.setAdapter(new ArrayAutoCompleteAdapter<String>(this, android.R.layout.select_dialog_item, stations));
 		_originTextView.setOnItemClickListener(OriginTextView_OnItemClick);
 		_originTextView.setOnKeyListener(OriginTextView_OnKey);
 		
 		_destinationTextView = (AutoCompleteTextView) findViewById(R.id.textview_destination);
-		_destinationTextView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, stations));
+		_destinationTextView.setAdapter(new ArrayAutoCompleteAdapter<String>(this, android.R.layout.select_dialog_item, stations));
 		_destinationTextView.setOnItemClickListener(DestinationTextView_OnItemClick);
 		_destinationTextView.setOnKeyListener(DestinationTextView_OnKey);
 		
