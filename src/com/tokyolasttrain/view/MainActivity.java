@@ -20,6 +20,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,11 +33,13 @@ import com.tokyolasttrain.api.NetworkTask.OnCompleteListener;
 import com.tokyolasttrain.api.NetworkTask.OnExceptionListener;
 import com.tokyolasttrain.control.Planner;
 import com.tokyolasttrain.control.Planner.Station;
+import com.tokyolasttrain.view.util.GifWebView;
 
 public class MainActivity extends Activity
 {
 	private AutoCompleteTextView _originTextView, _destinationTextView;
-	
+	private Button _btnOk;
+	private FrameLayout _loadingLayout;
 	private View _resultLayout;
 	private TextView _time, _timer;
 	
@@ -60,11 +64,12 @@ public class MainActivity extends Activity
 		_destinationTextView.setOnItemClickListener(DestinationTextView_OnItemClick);
 		_destinationTextView.setOnKeyListener(DestinationTextView_OnKey);
 		
-		findViewById(R.id.submit_button).setOnClickListener(SubmitButton_OnClick);
+		(_btnOk = (Button) findViewById(R.id.ok_button)).setOnClickListener(OkButton_OnClick);
 		
+		(_loadingLayout = (FrameLayout) findViewById(R.id.loading_layout)).addView(new GifWebView(this, "file:///android_asset/loading_animation.gif", true));
+		_resultLayout = findViewById(R.id.result_layout);
 		_time = (TextView) findViewById(R.id.time);
 		_timer = (TextView) findViewById(R.id.timer);
-		_resultLayout = findViewById(R.id.result_layout);
 		
 		// Set font
 		Typeface font = Typeface.createFromAsset(getAssets(), "fonts/KozGoPr6N-Light.otf");
@@ -131,7 +136,7 @@ public class MainActivity extends Activity
 		}
 	};
 	
-	private OnClickListener SubmitButton_OnClick = new OnClickListener()
+	private OnClickListener OkButton_OnClick = new OnClickListener()
 	{	
 		@Override
 		public void onClick(View v)
@@ -152,7 +157,7 @@ public class MainActivity extends Activity
 			{
 				if (!planner.getStation(station).equals(Planner.getInstance(getApplicationContext()).getStation(otherStation)))
 				{
-					ShowResult();
+					getLastRoute();
 				}
 				else
 				{
@@ -228,11 +233,11 @@ public class MainActivity extends Activity
 		}
 		else
 		{
-			ShowResult();
+			getLastRoute();
 		}
 	}
 	
-	private void ShowResult()
+	private void getLastRoute()
 	{
 		Planner planner = Planner.getInstance(getApplicationContext());
 		
@@ -240,28 +245,32 @@ public class MainActivity extends Activity
 		fetchLastRoute.setOriginStation(planner.getStation(Station.Origin));
 		fetchLastRoute.setDestinationStation(planner.getStation(Station.Destination));
 		
-		fetchLastRoute.setOnCompleteListener(new OnCompleteListener<HyperdiaApi.LastRoute>() {
-
+		fetchLastRoute.setOnCompleteListener(new OnCompleteListener<HyperdiaApi.LastRoute>()
+		{
 			@Override
-			public void onComplete(LastRoute result) { 
-				//TODO stop the loading and display the results
+			public void onComplete(LastRoute result)
+			{
 				onGotResults(result);
 			}
 		});
 		
-		fetchLastRoute.setOnGenericExceptionListener(new OnExceptionListener() {
+		fetchLastRoute.setOnGenericExceptionListener(new OnExceptionListener()
+		{
 			@Override
-			public void onException(Exception exception) {
+			public void onException(Exception exception)
+			{
 				// TODO present generic error message
 			}
 		});
 		
-		//TODO set the loading
 		fetchLastRoute.execute();
 		
+		_btnOk.setVisibility(View.GONE);
+		_loadingLayout.setVisibility(View.VISIBLE);
 	}
 	
-	private void onGotResults(LastRoute route) {
+	private void onGotResults(LastRoute route)
+	{
 		LocalTime currentTime = new LocalTime();
 		_time.setText(String.format("%02d:%02d", currentTime.getHourOfDay(), currentTime.getMinuteOfHour()));
 		
@@ -283,6 +292,7 @@ public class MainActivity extends Activity
 		     }
 		  }.start();
 		
+		 _loadingLayout.setVisibility(View.GONE);
 		_resultLayout.setVisibility(View.VISIBLE);
 	}
 }
