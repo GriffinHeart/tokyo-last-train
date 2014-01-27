@@ -23,7 +23,7 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:text="@string/app_name"
-	        style="@style/TitleFont" />
+	        style="@style/TitleLabel" />
 	    
 	    <LinearLayout
 	        android:layout_width="match_parent"
@@ -51,7 +51,7 @@
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:text="@string/where_are_you"
-			        style="@style/LabelFont" />
+			        style="@style/StationLabel" />
 		        
 		        <AutoCompleteTextView
 			        android:id="@+id/textview_origin"
@@ -70,44 +70,50 @@
 	        android:paddingLeft="30dp"
 	        android:paddingRight="30dp"
 	        android:orientation="horizontal"
-	        android:gravity="center_vertical" >
+	        android:gravity="bottom" >
 	    
 	        <ImageView
 	            android:id="@+id/ic_destination"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:layout_marginTop="6dp"
 	            android:src="@drawable/ic_destination"
 	            android:contentDescription="@string/desc" />
 	        
-	        <RelativeLayout
+	        <LinearLayout
 		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content" >
-	        
-		        <TextView
-			        android:id="@+id/label_destination"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:text="@string/where_to_go"
-			        style="@style/LabelFont" />
+		        android:layout_height="wrap_content"
+		        android:orientation="vertical" >
 		        
-		        <AutoCompleteTextView
-			        android:id="@+id/textview_destination"
+		        <LinearLayout
+		            android:id="@+id/layout_destination"
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
-			        android:layout_below="@+id/label_destination"
-			        style="@style/StationTextView"/>
+			        android:orientation="horizontal"
+			        android:gravity="center_vertical" >
 		        
-		        <CheckBox
-		            android:id="@+id/get_notification"
-		            android:button="@drawable/notification_checkbox"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:layout_above="@+id/textview_destination"
-		            android:layout_alignParentRight="true"
-		            android:layout_marginBottom="4dp" />
+		            <TextView
+				        android:id="@+id/label_destination"
+				        android:layout_width="0dp"
+				        android:layout_height="wrap_content"
+				        android:layout_weight="1"
+				        android:text="@string/where_to_go"
+				        style="@style/StationLabel" />
+
+			        <CheckBox
+			            android:id="@+id/get_notification"
+			            android:button="@drawable/notification_checkbox"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content" />
+		        
+		        </LinearLayout>
+		        
+		        <AutoCompleteTextView
+		            android:id="@+id/textview_destination"
+		            style="@style/StationTextView"
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content" />
 	        
-	        </RelativeLayout>
+	        </LinearLayout>
 	    </LinearLayout>
 	
 	    <RelativeLayout 
@@ -119,20 +125,20 @@
 	        android:gravity="center" >
 	    
 		    <Button
-		        android:id="@+id/ok_button"
+		        android:id="@+id/button_ok"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:background="@drawable/ic_ok" />
 	    
 		    <ProgressBar
-		        android:id="@+id/loading_layout"
+		        android:id="@+id/layout_loading"
 		        style="?android:attr/progressBarStyleLarge"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:visibility="gone" />
 		    
 		    <LinearLayout
-		        android:id="@+id/last_train_layout"
+		        android:id="@+id/layout_last_train"
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
 		        android:orientation="vertical"
@@ -142,31 +148,31 @@
 			        android:id="@+id/label_station"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
-			        style="@style/ResultFont" />
+			        style="@style/RegularLabel" />
 		        
 		        <TextView
 			        android:id="@+id/label_line"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
-			        style="@style/ResultFont" />
+			        style="@style/RegularLabel" />
 		        
 		        <TextView
 			        android:id="@+id/label_departure_time"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
-			        style="@style/ResultFont" />
+			        style="@style/RegularLabel" />
 		
 		        <TextView
 		            android:id="@+id/label_timer"
 		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
 		            android:layout_gravity="center_horizontal"
-		            style="@style/TimerFont" />
+		            style="@style/TimerLabel" />
 	        
 	    	</LinearLayout>
 	    	
 		    <LinearLayout
-		        android:id="@+id/missed_train_layout"
+		        android:id="@+id/layout_missed_train"
 		        android:layout_width="match_parent"
 		        android:layout_height="match_parent"
 		        android:orientation="vertical"
@@ -186,7 +192,7 @@
 			        android:layout_height="wrap_content"
 			        android:text="@string/missed_train"
 			        android:gravity="center"
-			        style="@style/ResultFont" />
+			        style="@style/RegularLabel" />
 	        
 	    	</LinearLayout>
 	    </RelativeLayout>

@@ -6,10 +6,8 @@ import java.util.Locale;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -20,7 +18,6 @@ import android.view.View.OnKeyListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
@@ -59,7 +56,6 @@ public class MainActivity extends Activity
 		List<String> stations = Planner.getInstance(getApplicationContext()).getStationList();
 		
 		_originTextView = (AutoCompleteTextView) findViewById(R.id.textview_origin);
-		
 		_originTextView.setAdapter(new ArrayAutoCompleteAdapter<String>(this, android.R.layout.select_dialog_item, stations));
 		_originTextView.setOnItemClickListener(OriginTextView_OnItemClick);
 		_originTextView.setOnKeyListener(OriginTextView_OnKey);
@@ -69,11 +65,11 @@ public class MainActivity extends Activity
 		_destinationTextView.setOnItemClickListener(DestinationTextView_OnItemClick);
 		_destinationTextView.setOnKeyListener(DestinationTextView_OnKey);
 		
-		(_btnOk = (Button) findViewById(R.id.ok_button)).setOnClickListener(OkButton_OnClick);
+		(_btnOk = (Button) findViewById(R.id.button_ok)).setOnClickListener(OkButton_OnClick);
 		
-		_loadingLayout = (ProgressBar) findViewById(R.id.loading_layout);	//.addView(new GifWebView(this, "file:///android_asset/loading_animation.gif"));
-		_lastTrainLayout = findViewById(R.id.last_train_layout);
-		_missedTrainLayout = findViewById(R.id.missed_train_layout);
+		_loadingLayout = (ProgressBar) findViewById(R.id.layout_loading);	//.addView(new GifWebView(this, "file:///android_asset/loading_animation.gif"));
+		_lastTrainLayout = findViewById(R.id.layout_last_train);
+		_missedTrainLayout = findViewById(R.id.layout_missed_train);
 		
 		_labelStation = (TextView) findViewById(R.id.label_station);
 		_labelLine = (TextView) findViewById(R.id.label_line);

@@ -1,23 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <!--
-        Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
-    -->
-    <style name="AppBaseTheme" parent="android:Theme.Light">
-        <!--
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        -->
-    </style>
-
-    <style name="AppTheme" parent="AppBaseTheme">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-    </style>
     
-    <style name="TitleFont">
+    <style name="TitleLabel">
         <item name="android:textSize">36sp</item>
         <item name="android:textColor">#FF0000</item>
         <item name="android:shadowColor">#000000</item>
@@ -28,17 +12,17 @@
         <item name="android:paddingTop">40dp</item>
     </style>
     
-    <style name="LabelFont" parent="@style/ResultFont">
+    <style name="StationLabel" parent="@style/RegularLabel">
         <item name="android:textAllCaps">true</item>
         <item name="android:paddingBottom">8dp</item>
         <item name="android:paddingLeft">8dp</item>
     </style>
     
-    <style name="TimerFont" parent="@style/ResultFont">
-        <item name="android:textSize">50sp</item>
+    <style name="TimerLabel" parent="@style/RegularLabel">
+        <item name="android:textSize">60sp</item>
     </style>
     
-    <style name="ResultFont">
+    <style name="RegularLabel">
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">#FF0000</item>
         <item name="android:shadowColor">#000000</item>
