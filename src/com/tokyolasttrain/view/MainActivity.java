@@ -38,6 +38,8 @@ import com.tokyolasttrain.control.Planner.Station;
 
 public class MainActivity extends Activity
 {
+	private CountDownTimer _timer;
+	
 	private AutoCompleteTextView _originTextView, _destinationTextView;
 	private Button _btnOk;
 	private ProgressBar _loadingLayout;
@@ -294,7 +296,7 @@ public class MainActivity extends Activity
 		}
 		else
 		{
-			new CountDownTimer(millisecondsLeft, 1000)
+			_timer = new CountDownTimer(millisecondsLeft, 1000)
 			{
 				public void onTick(long millisUntilFinished)
 				{
@@ -310,7 +312,7 @@ public class MainActivity extends Activity
 					ShowMissedTrain();
 				}
 			}.start();
-
+			
 			ShowLastTrain();
 		}
 	}
@@ -321,6 +323,11 @@ public class MainActivity extends Activity
 		_loadingLayout.setVisibility(View.GONE);
 		_lastTrainLayout.setVisibility(View.GONE);
 		_missedTrainLayout.setVisibility(View.GONE);
+		
+		if (_timer != null)
+		{
+			_timer.cancel();
+		}
 	}
 	
 	private void ShowLoading()
@@ -329,6 +336,11 @@ public class MainActivity extends Activity
 		_loadingLayout.setVisibility(View.VISIBLE);
 		_lastTrainLayout.setVisibility(View.GONE);
 		_missedTrainLayout.setVisibility(View.GONE);
+		
+		if (_timer != null)
+		{
+			_timer.cancel();
+		}
 	}
 	
 	private void ShowLastTrain()
@@ -345,5 +357,10 @@ public class MainActivity extends Activity
 		_loadingLayout.setVisibility(View.GONE);
 		_lastTrainLayout.setVisibility(View.GONE);
 		_missedTrainLayout.setVisibility(View.VISIBLE);
+		
+		if (_timer != null)
+		{
+			_timer.cancel();
+		}
 	}
 }

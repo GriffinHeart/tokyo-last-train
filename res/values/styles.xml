@@ -19,7 +19,7 @@
     </style>
     
     <style name="TimerLabel" parent="@style/RegularLabel">
-        <item name="android:textSize">60sp</item>
+        <item name="android:textSize">82sp</item>
     </style>
     
     <style name="RegularLabel">

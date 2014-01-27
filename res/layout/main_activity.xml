@@ -120,8 +120,10 @@
 	        android:layout_width="match_parent"
 	        android:layout_height="0dp"
 	        android:layout_weight="1"
-	        android:layout_marginTop="30dp"
 	        android:layout_marginBottom="50dp"
+	        android:layout_marginLeft="30dp"
+	        android:layout_marginRight="30dp"
+	        android:layout_marginTop="30dp"
 	        android:gravity="center" >
 	    
 		    <Button
