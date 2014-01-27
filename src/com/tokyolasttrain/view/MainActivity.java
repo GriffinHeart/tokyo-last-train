@@ -8,16 +8,20 @@ import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
@@ -45,6 +49,8 @@ public class MainActivity extends Activity
 	private ProgressBar _loadingLayout;
 	private View _lastTrainLayout, _missedTrainLayout;
 	private TextView _labelStation, _labelLine, _labelDepartureTime, _labelTimer;
+	
+	private View _focusCapturer;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -90,6 +96,38 @@ public class MainActivity extends Activity
 		_labelLine.setTypeface(font);
 		_labelDepartureTime.setTypeface(font);
 		_labelTimer.setTypeface(font);
+		
+		_focusCapturer = findViewById(R.id.focus_capturer);
+	}
+	
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent event)
+	{
+		View view = getCurrentFocus();
+		boolean ret = super.dispatchTouchEvent(event);
+
+		if (view instanceof TextView)
+		{
+			View w = getCurrentFocus();
+			int scrcoords[] = new int[2];
+			w.getLocationOnScreen(scrcoords);
+			float x = event.getRawX() + w.getLeft() - scrcoords[0];
+			float y = event.getRawY() + w.getTop() - scrcoords[1];
+
+			if (event.getAction() == MotionEvent.ACTION_UP &&
+					(x < w.getLeft() || x >= w.getRight() || y < w.getTop() || y > w.getBottom()))
+			{ 
+				if (view.getId() == R.id.textview_origin)
+				{
+					processSingleInput((TextView) w, Station.Origin, Station.Destination);
+				}
+				else if (view.getId() == R.id.textview_destination)
+				{
+					processSingleInput((TextView) view, Station.Destination, Station.Origin);
+				}
+			}
+		}
+		return ret;
 	}
 	
 	private OnItemClickListener OriginTextView_OnItemClick = new OnItemClickListener()
@@ -169,6 +207,9 @@ public class MainActivity extends Activity
 			{
 				if (!planner.getStation(station).equals(Planner.getInstance(getApplicationContext()).getStation(otherStation)))
 				{
+					// textView.clearFocus(); NOT WORKING !!!
+					dismissKeyboard();
+					
 					getLastRoute();
 				}
 				else
@@ -245,6 +286,10 @@ public class MainActivity extends Activity
 		}
 		else
 		{
+			// _originTextView.clearFocus();	 	NOT WORKING !!!
+			// _destinationTextView.clearFocus();	NOT WORKING !!!
+			dismissKeyboard();
+			
 			getLastRoute();
 		}
 	}
@@ -362,5 +407,14 @@ public class MainActivity extends Activity
 		{
 			_timer.cancel();
 		}
+	}
+	
+	private void dismissKeyboard()
+	{
+		InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+	    inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+	    
+	    // HACK !!!
+	    _focusCapturer.requestFocus();
 	}
 }
