@@ -45,12 +45,10 @@ public class MainActivity extends Activity
 {
 	private CountDownTimer _timer;
 	
-	private AutoCompleteTextView _originTextView, _destinationTextView;
+	private View _background, _layoutLoading, _layoutError, _layoutLastTrain, _layoutMissedTrain;
+	private AutoCompleteTextView _textViewOrigin, _textViewDestination;
 	private Button _btnOk;
-	private View _lastTrainLayout, _missedTrainLayout, _loadingLayout;
 	private TextView _labelStation, _labelLine, _labelDepartureTime, _labelTimer;
-	
-	private View _focusCapturer;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -61,22 +59,33 @@ public class MainActivity extends Activity
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.main_activity);
 		
+		_background = findViewById(R.id.background);
+		
+		_layoutLoading = findViewById(R.id.layout_loading);
+		_layoutError = findViewById(R.id.layout_error);
+		_layoutLastTrain = findViewById(R.id.layout_last_train);
+		_layoutMissedTrain = findViewById(R.id.layout_missed_train);
+		
 		List<String> stations = Planner.getInstance(getApplicationContext()).getStationList();
 		
-		_originTextView = (AutoCompleteTextView) findViewById(R.id.textview_origin);
-		_originTextView.setAdapter(new ArrayAutoCompleteAdapter<String>(this, android.R.layout.select_dialog_item, stations));
-		_originTextView.setOnItemClickListener(OriginTextView_OnItemClick);
-		_originTextView.setOnKeyListener(OriginTextView_OnKey);
+		_textViewOrigin = (AutoCompleteTextView) findViewById(R.id.textview_origin);
+		_textViewOrigin.setAdapter(new ArrayAutoCompleteAdapter<String>(this, android.R.layout.select_dialog_item, stations));
+		_textViewOrigin.setOnItemClickListener(OriginTextView_OnItemClick);
+		_textViewOrigin.setOnKeyListener(OriginTextView_OnKey);
 		
-		_destinationTextView = (AutoCompleteTextView) findViewById(R.id.textview_destination);
-		_destinationTextView.setAdapter(new ArrayAutoCompleteAdapter<String>(this, android.R.layout.select_dialog_item, stations));
-		_destinationTextView.setOnItemClickListener(DestinationTextView_OnItemClick);
-		_destinationTextView.setOnKeyListener(DestinationTextView_OnKey);
+		_textViewDestination = (AutoCompleteTextView) findViewById(R.id.textview_destination);
+		_textViewDestination.setAdapter(new ArrayAutoCompleteAdapter<String>(this, android.R.layout.select_dialog_item, stations));
+		_textViewDestination.setOnItemClickListener(DestinationTextView_OnItemClick);
+		_textViewDestination.setOnKeyListener(DestinationTextView_OnKey);
 		
 		(_btnOk = (Button) findViewById(R.id.button_ok)).setOnClickListener(OkButton_OnClick);
 		
-		_loadingLayout = findViewById(R.id.layout_loading);
-		
+		_labelStation = (TextView) findViewById(R.id.label_station);
+		_labelLine = (TextView) findViewById(R.id.label_line);
+		_labelDepartureTime = (TextView) findViewById(R.id.label_departure_time);
+		_labelTimer = (TextView) findViewById(R.id.label_timer);
+
+		// Initialize loading animation
 		InputStream stream = null;
         try
         {
@@ -84,56 +93,47 @@ public class MainActivity extends Activity
         }
         catch (IOException e) {}
         GifDecoderView splashAnimation = new GifDecoderView(this, stream);
-        ((FrameLayout) _loadingLayout).addView(splashAnimation);
-		
-		_lastTrainLayout = findViewById(R.id.layout_last_train);
-		_missedTrainLayout = findViewById(R.id.layout_missed_train);
-		
-		_labelStation = (TextView) findViewById(R.id.label_station);
-		_labelLine = (TextView) findViewById(R.id.label_line);
-		_labelDepartureTime = (TextView) findViewById(R.id.label_departure_time);
-		_labelTimer = (TextView) findViewById(R.id.label_timer);
-		
+        ((FrameLayout) _layoutLoading).addView(splashAnimation);
+
 		// Set font
 		Typeface font = Typeface.createFromAsset(getAssets(), "fonts/KozGoPr6N-Light.otf");
 		((TextView) findViewById(R.id.label_title)).setTypeface(font);
 		((TextView) findViewById(R.id.label_origin)).setTypeface(font);
-		_originTextView.setTypeface(font);
+		_textViewOrigin.setTypeface(font);
 		((TextView) findViewById(R.id.label_destination)).setTypeface(font);
-		_destinationTextView.setTypeface(font);
+		_textViewDestination.setTypeface(font);
 		((TextView) findViewById(R.id.label_missed_train)).setTypeface(font);
 		_labelStation.setTypeface(font);
 		_labelLine.setTypeface(font);
 		_labelDepartureTime.setTypeface(font);
 		_labelTimer.setTypeface(font);
-		
-		_focusCapturer = findViewById(R.id.focus_capturer);
 	}
 	
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent event)
 	{
-		View view = getCurrentFocus();
+		View prevFocusView = getCurrentFocus();
 		boolean ret = super.dispatchTouchEvent(event);
 
-		if (view instanceof TextView)
+		if (prevFocusView instanceof TextView)
 		{
-			View w = getCurrentFocus();
+			View nextFocusView = getCurrentFocus();
+			
 			int scrcoords[] = new int[2];
-			w.getLocationOnScreen(scrcoords);
-			float x = event.getRawX() + w.getLeft() - scrcoords[0];
-			float y = event.getRawY() + w.getTop() - scrcoords[1];
+			nextFocusView.getLocationOnScreen(scrcoords);
+			float x = event.getRawX() + nextFocusView.getLeft() - scrcoords[0];
+			float y = event.getRawY() + nextFocusView.getTop() - scrcoords[1];
 
 			if (event.getAction() == MotionEvent.ACTION_UP &&
-					(x < w.getLeft() || x >= w.getRight() || y < w.getTop() || y > w.getBottom()))
+					(x < nextFocusView.getLeft() || x >= nextFocusView.getRight() || y < nextFocusView.getTop() || y > nextFocusView.getBottom()))
 			{ 
-				if (view.getId() == R.id.textview_origin)
+				if (prevFocusView.getId() == R.id.textview_origin)
 				{
-					processSingleInput((TextView) w, Station.Origin, Station.Destination);
+					processSingleInput((TextView) prevFocusView, Station.Origin, Station.Destination);
 				}
-				else if (view.getId() == R.id.textview_destination)
+				else if (prevFocusView.getId() == R.id.textview_destination)
 				{
-					processSingleInput((TextView) view, Station.Destination, Station.Origin);
+					processSingleInput((TextView) prevFocusView, Station.Destination, Station.Origin);
 				}
 			}
 		}
@@ -168,7 +168,7 @@ public class MainActivity extends Activity
 						event.getAction() == KeyEvent.ACTION_DOWN &&
 							event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
 			{
-				_originTextView.dismissDropDown();
+				_textViewOrigin.dismissDropDown();
 				processSingleInput((TextView) view, Station.Origin, Station.Destination);
 				return true;
 			}
@@ -187,7 +187,7 @@ public class MainActivity extends Activity
 						event.getAction() == KeyEvent.ACTION_DOWN &&
 							event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
 			{
-				_destinationTextView.dismissDropDown();
+				_textViewDestination.dismissDropDown();
 				processSingleInput((TextView) view, Station.Destination, Station.Origin);
 				return true;
 			}
@@ -217,9 +217,7 @@ public class MainActivity extends Activity
 			{
 				if (!planner.getStation(station).equals(Planner.getInstance(getApplicationContext()).getStation(otherStation)))
 				{
-					// textView.clearFocus(); NOT WORKING !!!
 					dismissKeyboard();
-					
 					getLastRoute();
 				}
 				else
@@ -227,13 +225,13 @@ public class MainActivity extends Activity
 					switch (station)
 					{
 					case Destination:
-						_destinationTextView.requestFocus();
-						_destinationTextView.selectAll();
+						_textViewDestination.requestFocus();
+						_textViewDestination.selectAll();
 						break;
 						
 					case Origin:
-						_originTextView.requestFocus();
-						_originTextView.selectAll();
+						_textViewOrigin.requestFocus();
+						_textViewOrigin.selectAll();
 						break;
 					}
 					
@@ -245,11 +243,11 @@ public class MainActivity extends Activity
 				switch (otherStation)
 				{
 				case Destination:
-					_destinationTextView.requestFocus();
+					_textViewDestination.requestFocus();
 					break;
 					
 				case Origin:
-					_originTextView.requestFocus();
+					_textViewOrigin.requestFocus();
 					break;
 				}
 			}
@@ -259,13 +257,13 @@ public class MainActivity extends Activity
 			switch (station)
 			{
 			case Destination:
-				_destinationTextView.requestFocus();
-				_destinationTextView.selectAll();
+				_textViewDestination.requestFocus();
+				_textViewDestination.selectAll();
 				break;
 				
 			case Origin:
-				_originTextView.requestFocus();
-				_originTextView.selectAll();
+				_textViewOrigin.requestFocus();
+				_textViewOrigin.selectAll();
 				break;
 			}
 			
@@ -277,29 +275,26 @@ public class MainActivity extends Activity
 	{
 		Planner planner = Planner.getInstance(getApplicationContext());
 		
-		String originStationName = _originTextView.getText().toString().toLowerCase(Locale.US);
-		String destinationStationName = _destinationTextView.getText().toString().toLowerCase(Locale.US);
+		String originStationName = _textViewOrigin.getText().toString().toLowerCase(Locale.US);
+		String destinationStationName = _textViewDestination.getText().toString().toLowerCase(Locale.US);
 		
 		if (!planner.setStation(Station.Origin, originStationName))
 		{
-			_originTextView.requestFocus();
-			_originTextView.selectAll();
+			_textViewOrigin.requestFocus();
+			_textViewOrigin.selectAll();
 		
 			Toast.makeText(getApplicationContext(), "ERROR: Invalid station!", Toast.LENGTH_LONG).show();
 		}				
 		else if (!planner.setStation(Station.Destination, destinationStationName))
 		{
-			_destinationTextView.requestFocus();
-			_destinationTextView.selectAll();
+			_textViewDestination.requestFocus();
+			_textViewDestination.selectAll();
 		
 			Toast.makeText(getApplicationContext(), "ERROR: Invalid station!", Toast.LENGTH_LONG).show();
 		}
 		else
 		{
-			// _originTextView.clearFocus();	 	NOT WORKING !!!
-			// _destinationTextView.clearFocus();	NOT WORKING !!!
 			dismissKeyboard();
-			
 			getLastRoute();
 		}
 	}
@@ -326,7 +321,7 @@ public class MainActivity extends Activity
 			@Override
 			public void onException(Exception exception)
 			{
-				// TODO present generic error message
+				ShowError();
 			}
 		});
 		
@@ -351,6 +346,11 @@ public class MainActivity extends Activity
 		}
 		else
 		{
+			if (_timer != null)
+			{
+				_timer.cancel();
+			}
+			
 			_timer = new CountDownTimer(millisecondsLeft, 1000)
 			{
 				public void onTick(long millisUntilFinished)
@@ -372,59 +372,52 @@ public class MainActivity extends Activity
 		}
 	}
 	
-	private void ShowOk()
-	{
-		_btnOk.setVisibility(View.VISIBLE);
-		_loadingLayout.setVisibility(View.GONE);
-		_lastTrainLayout.setVisibility(View.GONE);
-		_missedTrainLayout.setVisibility(View.GONE);
-		
-		if (_timer != null)
-		{
-			_timer.cancel();
-		}
-	}
-	
-	private void ShowLoading()
-	{
-		_btnOk.setVisibility(View.GONE);
-		_loadingLayout.setVisibility(View.VISIBLE);
-		_lastTrainLayout.setVisibility(View.GONE);
-		_missedTrainLayout.setVisibility(View.GONE);
-		
-		if (_timer != null)
-		{
-			_timer.cancel();
-		}
-	}
-	
-	private void ShowLastTrain()
-	{
-		_btnOk.setVisibility(View.GONE);
-		_loadingLayout.setVisibility(View.GONE);
-		_lastTrainLayout.setVisibility(View.VISIBLE);
-		_missedTrainLayout.setVisibility(View.GONE);
-	}
-	
-	private void ShowMissedTrain()
-	{
-		_btnOk.setVisibility(View.GONE);
-		_loadingLayout.setVisibility(View.GONE);
-		_lastTrainLayout.setVisibility(View.GONE);
-		_missedTrainLayout.setVisibility(View.VISIBLE);
-		
-		if (_timer != null)
-		{
-			_timer.cancel();
-		}
-	}
-	
 	private void dismissKeyboard()
 	{
 		InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
 	    inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 	    
 	    // HACK !!!
-	    _focusCapturer.requestFocus();
+	    _background.requestFocus();
+	}
+	
+	private void ShowLoading()
+	{
+		_btnOk.setVisibility(View.GONE);
+		
+		_layoutLoading.setVisibility(View.VISIBLE);
+		_layoutLastTrain.setVisibility(View.GONE);
+		_layoutMissedTrain.setVisibility(View.GONE);
+		_layoutError.setVisibility(View.GONE);
+	}
+	
+	private void ShowError()
+	{
+		_btnOk.setVisibility(View.GONE);
+		
+		_layoutLoading.setVisibility(View.GONE);
+		_layoutLastTrain.setVisibility(View.GONE);
+		_layoutMissedTrain.setVisibility(View.GONE);
+		_layoutError.setVisibility(View.VISIBLE);
+	}
+	
+	private void ShowLastTrain()
+	{
+		_btnOk.setVisibility(View.GONE);
+		
+		_layoutLoading.setVisibility(View.GONE);
+		_layoutLastTrain.setVisibility(View.VISIBLE);
+		_layoutMissedTrain.setVisibility(View.GONE);
+		_layoutError.setVisibility(View.GONE);
+	}
+	
+	private void ShowMissedTrain()
+	{
+		_btnOk.setVisibility(View.GONE);
+		
+		_layoutLoading.setVisibility(View.GONE);
+		_layoutLastTrain.setVisibility(View.GONE);
+		_layoutMissedTrain.setVisibility(View.VISIBLE);
+		_layoutError.setVisibility(View.GONE);
 	}
 }

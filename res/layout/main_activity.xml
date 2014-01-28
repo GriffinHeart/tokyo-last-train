@@ -4,20 +4,16 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity" >
     
-    <View 
-	    android:id="@+id/focus_capturer"
-	    android:layout_width="0dp"
-	    android:layout_height="0dp"
-	    android:focusable="true" 
-	    android:focusableInTouchMode="true" />
-    
-    <ImageView 
+    <ImageView
+        android:id="@+id/background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:scaleType="centerCrop"
         android:background="@drawable/background"
-        android:contentDescription="@string/desc" />
+        android:contentDescription="@string/desc"
+        android:focusable="true" 
+	    android:focusableInTouchMode="true" />
     
     <LinearLayout
         android:layout_width="match_parent"
@@ -203,6 +199,33 @@
 			        style="@style/RegularLabel" />
 	        
 	    	</LinearLayout>
+	    	
+		    <LinearLayout
+		        android:id="@+id/layout_error"
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
+		        android:orientation="vertical"
+		        android:gravity="center_horizontal"
+		        android:visibility="gone" >
+		        
+		        <!-- TODO: Change to error icon -->
+		        <ImageView
+			        android:layout_width="wrap_content"
+			        android:layout_height="0dp"
+			        android:layout_weight="1"
+			        android:src="@drawable/ic_missed_train"
+			        android:contentDescription="@string/desc" />
+		        
+		        <TextView
+			        android:id="@+id/label_error"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:text="@string/missed_train"
+			        android:gravity="center"
+			        style="@style/RegularLabel" />
+	        
+	    	</LinearLayout>
+		    
 	    </RelativeLayout>
 	</LinearLayout>
 </RelativeLayout>
