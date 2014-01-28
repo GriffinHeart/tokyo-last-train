@@ -9,6 +9,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 
+import android.accounts.NetworkErrorException;
 import android.app.Activity;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -36,6 +37,7 @@ import com.tokyolasttrain.api.HyperdiaApi;
 import com.tokyolasttrain.api.HyperdiaApi.LastRoute;
 import com.tokyolasttrain.api.NetworkTask.OnCompleteListener;
 import com.tokyolasttrain.api.NetworkTask.OnExceptionListener;
+import com.tokyolasttrain.api.NetworkTask.OnNetworkUnavailableListener;
 import com.tokyolasttrain.control.ArrayAutoCompleteAdapter;
 import com.tokyolasttrain.control.Planner;
 import com.tokyolasttrain.control.Planner.Station;
@@ -48,7 +50,7 @@ public class MainActivity extends Activity
 	private View _background, _layoutLoading, _layoutError, _layoutLastTrain, _layoutMissedTrain;
 	private AutoCompleteTextView _textViewOrigin, _textViewDestination;
 	private Button _btnOk;
-	private TextView _labelStation, _labelLine, _labelDepartureTime, _labelTimer;
+	private TextView _labelError, _labelStation, _labelLine, _labelDepartureTime, _labelTimer;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -84,6 +86,7 @@ public class MainActivity extends Activity
 		_labelLine = (TextView) findViewById(R.id.label_line);
 		_labelDepartureTime = (TextView) findViewById(R.id.label_departure_time);
 		_labelTimer = (TextView) findViewById(R.id.label_timer);
+		_labelError = (TextView) findViewById(R.id.label_error);
 
 		// Initialize loading animation
 		InputStream stream = null;
@@ -103,6 +106,7 @@ public class MainActivity extends Activity
 		((TextView) findViewById(R.id.label_destination)).setTypeface(font);
 		_textViewDestination.setTypeface(font);
 		((TextView) findViewById(R.id.label_missed_train)).setTypeface(font);
+		_labelError.setTypeface(font);
 		_labelStation.setTypeface(font);
 		_labelLine.setTypeface(font);
 		_labelDepartureTime.setTypeface(font);
@@ -299,6 +303,7 @@ public class MainActivity extends Activity
 		}
 	}
 	
+	private boolean _done = false;
 	private void getLastRoute()
 	{
 		Planner planner = Planner.getInstance(getApplicationContext());
@@ -312,6 +317,7 @@ public class MainActivity extends Activity
 			@Override
 			public void onComplete(LastRoute result)
 			{
+				_done = true;
 				onGotResults(result);
 			}
 		});
@@ -321,13 +327,28 @@ public class MainActivity extends Activity
 			@Override
 			public void onException(Exception exception)
 			{
-				ShowError();
+				// TODO: Check why this exception is always fired
+				// _done = true;
+				ShowError(getResources().getString(R.string.generic_error));
+			}
+		});
+		
+		fetchLastRoute.setOnNetworkUnavailableListener(new OnNetworkUnavailableListener()
+		{
+			@Override
+			public void onNetworkException(NetworkErrorException exception)
+			{
+				_done = true;
+				ShowError(getResources().getString(R.string.network_unavailable_error));	
 			}
 		});
 		
 		fetchLastRoute.execute();
 		
-		ShowLoading();
+		if (!_done)
+		{
+			ShowLoading();
+		}
 	}
 	
 	private void onGotResults(LastRoute route)
@@ -391,8 +412,10 @@ public class MainActivity extends Activity
 		_layoutError.setVisibility(View.GONE);
 	}
 	
-	private void ShowError()
+	private void ShowError(String errorMessage)
 	{
+		_labelError.setText(errorMessage);
+		
 		_btnOk.setVisibility(View.GONE);
 		
 		_layoutLoading.setVisibility(View.GONE);

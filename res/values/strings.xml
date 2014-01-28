@@ -5,8 +5,9 @@
     <string name="where_are_you">Where are you?</string>
     <string name="where_to_go">Where to go?</string>
     <string name="missed_train">SORRY, NO MORE TRAINS\nbut you can enjoy your night anyway</string>
-    <string name="generic_error">SORRY, SOMETHING WENT WRONG</string>
-
+    <string name="generic_error">SORRY, SOMETHING WENT WRONG\nplease try again</string>
+	<string name="network_unavailable_error">NETWORK UNAVAILABLE\nplease connect to Wi-Fi</string>
+    
     <string name="desc"></string>
     
 </resources>
