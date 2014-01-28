@@ -11,7 +11,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.tokyolasttrain.R;
-import com.tokyolasttrain.view.util.GifWebView;
+import com.tokyolasttrain.view.gif.GifWebView;
 
 public class SplashScreen extends Activity
 {
@@ -28,8 +28,10 @@ public class SplashScreen extends Activity
   
         setContentView(R.layout.splash_screen);
         
-        GifWebView splashAnimation = new GifWebView(this, "file:///android_asset/splash_animation.gif", true);
+        GifWebView splashAnimation = new GifWebView(this, "file:///android_asset/splash_animation.gif");
         splashAnimation.setBackgroundColor(getResources().getColor(android.R.color.black));
+        splashAnimation.fitScreen();
+        
         ((FrameLayout) findViewById(R.id.splash_animation_layout)).addView(splashAnimation);
         
         findViewById(R.id.dismiss_splash_screen).setOnClickListener(new OnClickListener()

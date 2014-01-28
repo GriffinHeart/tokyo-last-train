@@ -1,5 +1,7 @@
 package com.tokyolasttrain.view;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 
@@ -8,11 +10,9 @@ import org.joda.time.Interval;
 import org.joda.time.LocalDateTime;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,7 +26,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.ProgressBar;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +39,7 @@ import com.tokyolasttrain.api.NetworkTask.OnExceptionListener;
 import com.tokyolasttrain.control.ArrayAutoCompleteAdapter;
 import com.tokyolasttrain.control.Planner;
 import com.tokyolasttrain.control.Planner.Station;
+import com.tokyolasttrain.view.gif.GifDecoderView;
 
 public class MainActivity extends Activity
 {
@@ -46,8 +47,7 @@ public class MainActivity extends Activity
 	
 	private AutoCompleteTextView _originTextView, _destinationTextView;
 	private Button _btnOk;
-	private ProgressBar _loadingLayout;
-	private View _lastTrainLayout, _missedTrainLayout;
+	private View _lastTrainLayout, _missedTrainLayout, _loadingLayout;
 	private TextView _labelStation, _labelLine, _labelDepartureTime, _labelTimer;
 	
 	private View _focusCapturer;
@@ -75,7 +75,17 @@ public class MainActivity extends Activity
 		
 		(_btnOk = (Button) findViewById(R.id.button_ok)).setOnClickListener(OkButton_OnClick);
 		
-		_loadingLayout = (ProgressBar) findViewById(R.id.layout_loading);	//.addView(new GifWebView(this, "file:///android_asset/loading_animation.gif"));
+		_loadingLayout = findViewById(R.id.layout_loading);
+		
+		InputStream stream = null;
+        try
+        {
+        	stream = getAssets().open("loading_animation.gif");
+        }
+        catch (IOException e) {}
+        GifDecoderView splashAnimation = new GifDecoderView(this, stream);
+        ((FrameLayout) _loadingLayout).addView(splashAnimation);
+		
 		_lastTrainLayout = findViewById(R.id.layout_last_train);
 		_missedTrainLayout = findViewById(R.id.layout_missed_train);
 		

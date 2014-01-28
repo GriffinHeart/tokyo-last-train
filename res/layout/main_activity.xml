@@ -138,12 +138,11 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:background="@drawable/ic_ok" />
-	    
-		    <ProgressBar
+			
+		    <FrameLayout
 		        android:id="@+id/layout_loading"
-		        style="?android:attr/progressBarStyleLarge"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
+		        android:layout_width="80dp"
+		        android:layout_height="80dp"
 		        android:visibility="gone" />
 		    
 		    <LinearLayout

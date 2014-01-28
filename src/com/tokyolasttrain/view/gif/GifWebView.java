@@ -1,8 +1,8 @@
-package com.tokyolasttrain.view.util;
+package com.tokyolasttrain.view.gif;
 
 import android.content.Context;
-import android.webkit.WebView;
 import android.webkit.WebSettings.LayoutAlgorithm;
+import android.webkit.WebView;
 
 public class GifWebView extends WebView
 {
@@ -17,12 +17,8 @@ public class GifWebView extends WebView
 		loadUrl(path);
 	}
 	
-	public GifWebView(Context context, String path, boolean fullscreen)
+	public void fitScreen()
 	{
-		this(context, path);
-		if (fullscreen)
-		{
-			getSettings().setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
-		}
+		getSettings().setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
 	}
 }
