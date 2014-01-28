@@ -11,6 +11,9 @@ import org.joda.time.LocalDateTime;
 
 import android.accounts.NetworkErrorException;
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -27,6 +30,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +44,7 @@ import com.tokyolasttrain.api.HyperdiaApi.LastRoute;
 import com.tokyolasttrain.api.NetworkTask.OnCompleteListener;
 import com.tokyolasttrain.api.NetworkTask.OnExceptionListener;
 import com.tokyolasttrain.api.NetworkTask.OnNetworkUnavailableListener;
+import com.tokyolasttrain.control.Alarm;
 import com.tokyolasttrain.control.ArrayAutoCompleteAdapter;
 import com.tokyolasttrain.control.Planner;
 import com.tokyolasttrain.control.Planner.Station;
@@ -46,6 +53,11 @@ import com.tokyolasttrain.view.gif.GifDecoderView;
 public class MainActivity extends Activity
 {
 	private CountDownTimer _timer;
+	
+	private static final int MINUTES_TO_ALARM = 15;
+	private PendingIntent _alarmSender;
+	private AlarmManager _alarmManager;
+	private boolean _notifyUser = false;
 	
 	private View _background, _layoutLoading, _layoutError, _layoutLastTrain, _layoutMissedTrain;
 	private AutoCompleteTextView _textViewOrigin, _textViewDestination;
@@ -60,6 +72,9 @@ public class MainActivity extends Activity
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.main_activity);
+		
+        _alarmSender = PendingIntent.getBroadcast(MainActivity.this, 0, new Intent(MainActivity.this, Alarm.class), 0);
+        _alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 		
 		_background = findViewById(R.id.background);
 		
@@ -80,6 +95,8 @@ public class MainActivity extends Activity
 		_textViewDestination.setOnItemClickListener(DestinationTextView_OnItemClick);
 		_textViewDestination.setOnKeyListener(DestinationTextView_OnKey);
 		
+		((CheckBox) findViewById(R.id.checkbox_alarm)).setOnCheckedChangeListener(AlarmCheckBox_OnCheckedChange);
+		
 		(_btnOk = (Button) findViewById(R.id.button_ok)).setOnClickListener(OkButton_OnClick);
 		
 		_labelStation = (TextView) findViewById(R.id.label_station);
@@ -99,18 +116,20 @@ public class MainActivity extends Activity
         ((FrameLayout) _layoutLoading).addView(splashAnimation);
 
 		// Set font
-		Typeface font = Typeface.createFromAsset(getAssets(), "fonts/KozGoPr6N-Light.otf");
-		((TextView) findViewById(R.id.label_title)).setTypeface(font);
-		((TextView) findViewById(R.id.label_origin)).setTypeface(font);
-		_textViewOrigin.setTypeface(font);
-		((TextView) findViewById(R.id.label_destination)).setTypeface(font);
-		_textViewDestination.setTypeface(font);
-		((TextView) findViewById(R.id.label_missed_train)).setTypeface(font);
-		_labelError.setTypeface(font);
-		_labelStation.setTypeface(font);
-		_labelLine.setTypeface(font);
-		_labelDepartureTime.setTypeface(font);
-		_labelTimer.setTypeface(font);
+		Typeface lightFont = Typeface.createFromAsset(getAssets(), "fonts/KozGoPr6N-Light.otf");
+		((TextView) findViewById(R.id.label_title)).setTypeface(lightFont);
+		((TextView) findViewById(R.id.label_origin)).setTypeface(lightFont);
+		_textViewOrigin.setTypeface(lightFont);
+		((TextView) findViewById(R.id.label_destination)).setTypeface(lightFont);
+		_textViewDestination.setTypeface(lightFont);
+		((TextView) findViewById(R.id.label_missed_train)).setTypeface(lightFont);
+		_labelError.setTypeface(lightFont);
+		_labelStation.setTypeface(lightFont);
+		_labelLine.setTypeface(lightFont);
+		_labelDepartureTime.setTypeface(lightFont);
+		
+		Typeface veryLightFont = Typeface.createFromAsset(getAssets(), "fonts/KozGoPr6N-Light.otf");
+		_labelTimer.setTypeface(veryLightFont);
 	}
 	
 	@Override
@@ -197,6 +216,24 @@ public class MainActivity extends Activity
 			}
 			
 			return false;
+		}
+	};
+	
+	private OnCheckedChangeListener AlarmCheckBox_OnCheckedChange = new OnCheckedChangeListener()
+	{
+		@Override
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+		{
+			_notifyUser = isChecked;
+			
+			if (_notifyUser && Planner.getInstance(getApplicationContext()).hasSetTimeLeftForAlarm())
+			{
+				setAlarm(Planner.getInstance(getApplicationContext()).getTimeLeftForAlarm());
+			}
+			else if (!_notifyUser)
+			{
+				cancelAlarm();
+			}
 		}
 	};
 	
@@ -307,6 +344,12 @@ public class MainActivity extends Activity
 	private void getLastRoute()
 	{
 		Planner planner = Planner.getInstance(getApplicationContext());
+		planner.setTimeLeftForAlarm(null);
+		
+		if (_notifyUser)
+		{
+			cancelAlarm();
+		}
 		
 		FetchLastRoute fetchLastRoute = new FetchLastRoute();
 		fetchLastRoute.setOriginStation(planner.getStation(Station.Origin));
@@ -359,8 +402,17 @@ public class MainActivity extends Activity
 		LocalDateTime departureTime = route.getDepartureTime();
 		_labelDepartureTime.setText(String.format("%02d:%02d", departureTime.getHourOfDay(), departureTime.getMinuteOfHour()));
 		
-		Interval interval = new Interval(new DateTime(), departureTime.toDateTime());
-		long millisecondsLeft = interval.toDurationMillis();
+		DateTime currentTime = new DateTime();
+		
+		Interval timeLeft = new Interval(currentTime, departureTime.toDateTime().minusMinutes(MINUTES_TO_ALARM));
+		Planner.getInstance(getApplicationContext()).setTimeLeftForAlarm(timeLeft);
+		
+		if (_notifyUser)
+		{
+			setAlarm(timeLeft.toDurationMillis());
+		}
+		
+		long millisecondsLeft = new Interval(currentTime, departureTime.toDateTime()).toDurationMillis();
 		if (millisecondsLeft <= 0)
 		{
 			ShowMissedTrain();
@@ -391,6 +443,17 @@ public class MainActivity extends Activity
 			
 			ShowLastTrain();
 		}
+	}
+	
+	private void setAlarm(long millisLeft)
+	{
+		cancelAlarm();
+        _alarmManager.set(AlarmManager.RTC_WAKEUP, millisLeft, _alarmSender);
+	}
+	
+	private void cancelAlarm()
+	{
+		_alarmManager.cancel(_alarmSender);
 	}
 	
 	private void dismissKeyboard()

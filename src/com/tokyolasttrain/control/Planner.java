@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.joda.time.Interval;
+
 import android.content.Context;
 
 public class Planner
@@ -14,6 +16,8 @@ public class Planner
 	
 	private Map<String, String> _stations;
 	private String _originStation, _destinationStation;
+	
+	private Interval _timeLeftForAlarm;
 	
 	private Planner(Context context)
 	{
@@ -84,6 +88,21 @@ public class Planner
 		default:
 			return false;
 		}
+	}
+	
+	public void setTimeLeftForAlarm(Interval timeLeft)
+	{
+		_timeLeftForAlarm = timeLeft;
+	}
+	
+	public boolean hasSetTimeLeftForAlarm()
+	{
+		return _timeLeftForAlarm != null;
+	}
+	
+	public long getTimeLeftForAlarm()
+	{
+		return _timeLeftForAlarm.toDurationMillis();
 	}
 	
 	private boolean isStationValid(String station)

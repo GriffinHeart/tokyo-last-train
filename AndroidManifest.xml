@@ -32,6 +32,8 @@
             android:screenOrientation="portrait" >
         </activity>
         
+        <receiver android:name=".control.Alarm" android:process=":remote" />
+        
     </application>
 
 </manifest>
