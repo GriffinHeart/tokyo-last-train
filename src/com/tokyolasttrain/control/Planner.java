@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.joda.time.DateTime;
 import org.joda.time.Interval;
+import org.joda.time.LocalDateTime;
 
 import android.content.Context;
 
@@ -14,10 +16,12 @@ public class Planner
 	
 	public enum Station { Origin, Destination };
 	
+	private static final int MINUTES_TO_ALARM = 15;
+	
 	private Map<String, String> _stations;
 	private String _originStation, _destinationStation;
 	
-	private Interval _timeLeftForAlarm;
+	private LocalDateTime _lastTrainDepartureTime;
 	
 	private Planner(Context context)
 	{
@@ -90,19 +94,24 @@ public class Planner
 		}
 	}
 	
-	public void setTimeLeftForAlarm(Interval timeLeft)
+	public void setLastTrainDepartureTime(LocalDateTime departureTime)
 	{
-		_timeLeftForAlarm = timeLeft;
+		_lastTrainDepartureTime = departureTime;
 	}
 	
-	public boolean hasSetTimeLeftForAlarm()
+	public boolean hasSetLastTrainDepartureTime()
 	{
-		return _timeLeftForAlarm != null;
+		return _lastTrainDepartureTime != null;
+	}
+	
+	public LocalDateTime getLastTrainDepartureTime()
+	{
+		return _lastTrainDepartureTime;
 	}
 	
 	public long getTimeLeftForAlarm()
 	{
-		return _timeLeftForAlarm.toDurationMillis();
+		return new Interval(new DateTime(), (_lastTrainDepartureTime.minusMinutes(MINUTES_TO_ALARM)).toDateTime()).toDurationMillis();
 	}
 	
 	private boolean isStationValid(String station)

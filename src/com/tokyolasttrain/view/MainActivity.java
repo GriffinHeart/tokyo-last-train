@@ -52,9 +52,9 @@ import com.tokyolasttrain.view.gif.GifDecoderView;
 
 public class MainActivity extends Activity
 {
+	private Planner _planner;
 	private CountDownTimer _timer;
 	
-	private static final int MINUTES_TO_ALARM = 15;
 	private PendingIntent _alarmSender;
 	private AlarmManager _alarmManager;
 	private boolean _notifyUser = false;
@@ -73,6 +73,8 @@ public class MainActivity extends Activity
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.main_activity);
 		
+		_planner = Planner.getInstance(getApplicationContext());
+		
         _alarmSender = PendingIntent.getBroadcast(MainActivity.this, 0, new Intent(MainActivity.this, Alarm.class), 0);
         _alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 		
@@ -83,7 +85,7 @@ public class MainActivity extends Activity
 		_layoutLastTrain = findViewById(R.id.layout_last_train);
 		_layoutMissedTrain = findViewById(R.id.layout_missed_train);
 		
-		List<String> stations = Planner.getInstance(getApplicationContext()).getStationList();
+		List<String> stations = _planner.getStationList();
 		
 		_textViewOrigin = (AutoCompleteTextView) findViewById(R.id.textview_origin);
 		_textViewOrigin.setAdapter(new ArrayAutoCompleteAdapter<String>(this, android.R.layout.select_dialog_item, stations));
@@ -128,8 +130,8 @@ public class MainActivity extends Activity
 		_labelLine.setTypeface(lightFont);
 		_labelDepartureTime.setTypeface(lightFont);
 		
-		Typeface veryLightFont = Typeface.createFromAsset(getAssets(), "fonts/KozGoPr6N-Light.otf");
-		_labelTimer.setTypeface(veryLightFont);
+		Typeface extraLightFont = Typeface.createFromAsset(getAssets(), "fonts/KozGoPr6N-ExtraLight.otf");
+		_labelTimer.setTypeface(extraLightFont);
 	}
 	
 	@Override
@@ -226,9 +228,9 @@ public class MainActivity extends Activity
 		{
 			_notifyUser = isChecked;
 			
-			if (_notifyUser && Planner.getInstance(getApplicationContext()).hasSetTimeLeftForAlarm())
+			if (_notifyUser && _planner.hasSetLastTrainDepartureTime())
 			{
-				setAlarm(Planner.getInstance(getApplicationContext()).getTimeLeftForAlarm());
+				setAlarm(_planner.getTimeLeftForAlarm());
 			}
 			else if (!_notifyUser)
 			{
@@ -248,15 +250,13 @@ public class MainActivity extends Activity
 	
 	private void processSingleInput(TextView textView, Station station, Station otherStation)
 	{
-		Planner planner = Planner.getInstance(getApplicationContext());
-		
 		String stationName = textView.getText().toString().toLowerCase(Locale.US);
 		
-		if (planner.setStation(station, stationName))
+		if (_planner.setStation(station, stationName))
 		{
-			if (planner.hasSetStation(otherStation))
+			if (_planner.hasSetStation(otherStation))
 			{
-				if (!planner.getStation(station).equals(Planner.getInstance(getApplicationContext()).getStation(otherStation)))
+				if (!_planner.getStation(station).equals(_planner.getStation(otherStation)))
 				{
 					dismissKeyboard();
 					getLastRoute();
@@ -314,19 +314,17 @@ public class MainActivity extends Activity
 	
 	private void processInput()
 	{
-		Planner planner = Planner.getInstance(getApplicationContext());
-		
 		String originStationName = _textViewOrigin.getText().toString().toLowerCase(Locale.US);
 		String destinationStationName = _textViewDestination.getText().toString().toLowerCase(Locale.US);
 		
-		if (!planner.setStation(Station.Origin, originStationName))
+		if (!_planner.setStation(Station.Origin, originStationName))
 		{
 			_textViewOrigin.requestFocus();
 			_textViewOrigin.selectAll();
 		
 			Toast.makeText(getApplicationContext(), "ERROR: Invalid station!", Toast.LENGTH_LONG).show();
 		}				
-		else if (!planner.setStation(Station.Destination, destinationStationName))
+		else if (!_planner.setStation(Station.Destination, destinationStationName))
 		{
 			_textViewDestination.requestFocus();
 			_textViewDestination.selectAll();
@@ -343,8 +341,7 @@ public class MainActivity extends Activity
 	private boolean _done = false;
 	private void getLastRoute()
 	{
-		Planner planner = Planner.getInstance(getApplicationContext());
-		planner.setTimeLeftForAlarm(null);
+		_planner.setLastTrainDepartureTime(null);
 		
 		if (_notifyUser)
 		{
@@ -352,8 +349,8 @@ public class MainActivity extends Activity
 		}
 		
 		FetchLastRoute fetchLastRoute = new FetchLastRoute();
-		fetchLastRoute.setOriginStation(planner.getStation(Station.Origin));
-		fetchLastRoute.setDestinationStation(planner.getStation(Station.Destination));
+		fetchLastRoute.setOriginStation(_planner.getStation(Station.Origin));
+		fetchLastRoute.setDestinationStation(_planner.getStation(Station.Destination));
 		
 		fetchLastRoute.setOnCompleteListener(new OnCompleteListener<HyperdiaApi.LastRoute>()
 		{
@@ -396,23 +393,19 @@ public class MainActivity extends Activity
 	
 	private void onGotResults(LastRoute route)
 	{
+		LocalDateTime departureTime = route.getDepartureTime();
+		_planner.setLastTrainDepartureTime(departureTime);
+		
 		_labelStation.setText(route.getStation());
 		_labelLine.setText(route.getLine());
-		
-		LocalDateTime departureTime = route.getDepartureTime();
 		_labelDepartureTime.setText(String.format("%02d:%02d", departureTime.getHourOfDay(), departureTime.getMinuteOfHour()));
-		
-		DateTime currentTime = new DateTime();
-		
-		Interval timeLeft = new Interval(currentTime, departureTime.toDateTime().minusMinutes(MINUTES_TO_ALARM));
-		Planner.getInstance(getApplicationContext()).setTimeLeftForAlarm(timeLeft);
 		
 		if (_notifyUser)
 		{
-			setAlarm(timeLeft.toDurationMillis());
+			setAlarm(_planner.getTimeLeftForAlarm());
 		}
 		
-		long millisecondsLeft = new Interval(currentTime, departureTime.toDateTime()).toDurationMillis();
+		long millisecondsLeft = new Interval(new DateTime(), departureTime.toDateTime()).toDurationMillis();
 		if (millisecondsLeft <= 0)
 		{
 			ShowMissedTrain();
