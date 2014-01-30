@@ -6,7 +6,8 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
-import org.joda.time.LocalDateTime;
+
+import com.tokyolasttrain.api.HyperdiaApi.LastRoute;
 
 import android.content.Context;
 
@@ -21,7 +22,7 @@ public class Planner
 	private Map<String, String> _stations;
 	private String _originStation, _destinationStation;
 	
-	private LocalDateTime _lastTrainDepartureTime;
+	private LastRoute _lastRoute;
 	
 	private Planner(Context context)
 	{
@@ -94,24 +95,27 @@ public class Planner
 		}
 	}
 	
-	public void setLastTrainDepartureTime(LocalDateTime departureTime)
+	public void setLastRoute(LastRoute lastRoute)
 	{
-		_lastTrainDepartureTime = departureTime;
+		_lastRoute = lastRoute;
 	}
 	
-	public boolean hasSetLastTrainDepartureTime()
+	public boolean hasSetLastRoute()
 	{
-		return _lastTrainDepartureTime != null;
+		return _lastRoute != null;
 	}
 	
-	public LocalDateTime getLastTrainDepartureTime()
+	public LastRoute getLastRoute()
 	{
-		return _lastTrainDepartureTime;
+		return _lastRoute;
 	}
 	
 	public long getTimeLeftForAlarm()
 	{
-		return new Interval(new DateTime(), (_lastTrainDepartureTime.minusMinutes(MINUTES_TO_ALARM)).toDateTime()).toDurationMillis();
+		return new Interval(new DateTime(), (_lastRoute.getDepartureTime().minusMinutes(MINUTES_TO_ALARM)).toDateTime()).toDurationMillis();
+		
+		// DEBUG: Set alarm in 10 seconds
+		// return (new DateTime().plusSeconds(10)).getMillis();
 	}
 	
 	private boolean isStationValid(String station)

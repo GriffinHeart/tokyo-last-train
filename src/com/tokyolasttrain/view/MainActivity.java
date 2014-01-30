@@ -7,7 +7,6 @@ import java.util.Locale;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
-import org.joda.time.LocalDateTime;
 
 import android.accounts.NetworkErrorException;
 import android.app.Activity;
@@ -44,7 +43,7 @@ import com.tokyolasttrain.api.HyperdiaApi.LastRoute;
 import com.tokyolasttrain.api.NetworkTask.OnCompleteListener;
 import com.tokyolasttrain.api.NetworkTask.OnExceptionListener;
 import com.tokyolasttrain.api.NetworkTask.OnNetworkUnavailableListener;
-import com.tokyolasttrain.control.Alarm;
+import com.tokyolasttrain.control.AlarmReceiver;
 import com.tokyolasttrain.control.ArrayAutoCompleteAdapter;
 import com.tokyolasttrain.control.Planner;
 import com.tokyolasttrain.control.Planner.Station;
@@ -75,7 +74,7 @@ public class MainActivity extends Activity
 		
 		_planner = Planner.getInstance(getApplicationContext());
 		
-        _alarmSender = PendingIntent.getBroadcast(MainActivity.this, 0, new Intent(MainActivity.this, Alarm.class), 0);
+        _alarmSender = PendingIntent.getBroadcast(MainActivity.this, 0, new Intent(MainActivity.this, AlarmReceiver.class), 0);
         _alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 		
 		_background = findViewById(R.id.background);
@@ -228,7 +227,7 @@ public class MainActivity extends Activity
 		{
 			_notifyUser = isChecked;
 			
-			if (_notifyUser && _planner.hasSetLastTrainDepartureTime())
+			if (_notifyUser && _planner.hasSetLastRoute())
 			{
 				setAlarm(_planner.getTimeLeftForAlarm());
 			}
@@ -341,7 +340,7 @@ public class MainActivity extends Activity
 	private boolean _done = false;
 	private void getLastRoute()
 	{
-		_planner.setLastTrainDepartureTime(null);
+		_planner.setLastRoute(null);
 		
 		if (_notifyUser)
 		{
@@ -393,19 +392,18 @@ public class MainActivity extends Activity
 	
 	private void onGotResults(LastRoute route)
 	{
-		LocalDateTime departureTime = route.getDepartureTime();
-		_planner.setLastTrainDepartureTime(departureTime);
+		_planner.setLastRoute(route);
 		
 		_labelStation.setText(route.getStation());
 		_labelLine.setText(route.getLine());
-		_labelDepartureTime.setText(String.format("%02d:%02d", departureTime.getHourOfDay(), departureTime.getMinuteOfHour()));
+		_labelDepartureTime.setText(String.format("%02d:%02d", route.getDepartureTime().getHourOfDay(), route.getDepartureTime().getMinuteOfHour()));
 		
 		if (_notifyUser)
 		{
 			setAlarm(_planner.getTimeLeftForAlarm());
 		}
 		
-		long millisecondsLeft = new Interval(new DateTime(), departureTime.toDateTime()).toDurationMillis();
+		long millisecondsLeft = new Interval(new DateTime(), route.getDepartureTime().toDateTime()).toDurationMillis();
 		if (millisecondsLeft <= 0)
 		{
 			ShowMissedTrain();
