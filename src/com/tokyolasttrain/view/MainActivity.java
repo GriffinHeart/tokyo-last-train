@@ -13,9 +13,12 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -131,6 +134,76 @@ public class MainActivity extends Activity
 		
 		Typeface extraLightFont = Typeface.createFromAsset(getAssets(), "fonts/KozGoPr6N-ExtraLight.otf");
 		_labelTimer.setTypeface(extraLightFont);
+	}
+	
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		
+		SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+		
+		String originStation;
+		if (!(originStation = sharedPrefs.getString("OriginStation", "")).isEmpty())
+		{
+			_planner.setStation(Station.Origin, originStation);
+			_textViewOrigin.setText(originStation);
+		}
+		
+		String destinationStation;
+		if (!(destinationStation = sharedPrefs.getString("DestinationStation", "")).isEmpty())
+		{
+			_planner.setStation(Station.Destination, destinationStation);
+			_textViewDestination.setText(destinationStation);
+		}
+		
+		// TODO: FIX !
+		/*
+		Gson gson = new Gson(); String json;
+		if (!(json = sharedPrefs.getString("LastRoute", "")).isEmpty())
+		{
+			LastRoute lastRoute = gson.fromJson(json, LastRoute.class);
+			_planner.setLastRoute(lastRoute);
+		}
+		*/
+	}
+	
+	@Override
+	protected void onStop()
+	{
+		super.onStop();
+		
+		boolean prefsEdited = false;
+		Editor prefsEditor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+		
+		if (_planner.hasSetStation(Station.Origin))
+		{
+			prefsEditor.putString("OriginStation", _planner.getStation(Station.Origin));
+			prefsEdited = true;
+		}
+		if (_planner.hasSetStation(Station.Destination))
+		{
+			prefsEditor.putString("DestinationStation", _planner.getStation(Station.Destination));
+			prefsEdited = true;
+		}
+		
+		// TODO: FIX !
+		/*
+		if (_planner.hasSetLastRoute())
+		{
+			
+			Gson gson = new Gson();
+			String json = gson.toJson(_planner.getLastRoute());
+			prefsEditor.putString("LastRoute", json);
+			
+			prefsEdited = true;
+		}
+		*/
+		
+		if (prefsEdited)
+		{
+			prefsEditor.commit();
+		}
 	}
 	
 	@Override
