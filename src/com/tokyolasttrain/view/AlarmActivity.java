@@ -1,10 +1,16 @@
 package com.tokyolasttrain.view;
 
+import java.io.IOException;
+
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.Typeface;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
@@ -26,13 +32,16 @@ public class AlarmActivity extends Activity
 		setContentView(R.layout.alarm_activity);
 		
 		final Vibrator vibrator = startVibration();
+		final MediaPlayer player = startSound();
 		
 		((Button) findViewById(R.id.button_alarm_ok)).setOnClickListener(new OnClickListener()
 		{	
 			@Override
 			public void onClick(View v)
 			{
-				vibrator.cancel();
+				stopVibration(vibrator);
+				stopSound(player);
+				
 				finish();
 			}
 		});
@@ -50,5 +59,40 @@ public class AlarmActivity extends Activity
 		vibrator.vibrate(pattern, 0);
 		
 		return vibrator;
+	}
+	
+	private void stopVibration(Vibrator vibrator)
+	{
+		vibrator.cancel();
+	}
+	
+	private MediaPlayer startSound()
+	{
+		MediaPlayer player = null;
+		try
+		{
+			AssetFileDescriptor afd = getAssets().openFd("sounds/alarm.mp3");
+			
+		    player = new MediaPlayer();
+		    player.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+		    
+		    afd.close();
+		    
+		    player.setAudioStreamType(AudioManager.STREAM_NOTIFICATION);
+		    player.prepare();
+		    player.start();
+		}
+		catch (IOException e)
+		{
+			Log.d("TokyoLastTrain", e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return player;
+	}
+	
+	private void stopSound(MediaPlayer player)
+	{
+		player.stop();
 	}
 }

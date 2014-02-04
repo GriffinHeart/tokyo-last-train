@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
+import android.content.Context;
 
 import com.tokyolasttrain.api.HyperdiaApi.LastRoute;
-
-import android.content.Context;
 
 public class Planner
 {
@@ -110,12 +107,10 @@ public class Planner
 		return _lastRoute;
 	}
 	
+	// TODO: Test
 	public long getTimeLeftForAlarm()
-	{
-		return new Interval(new DateTime(), (_lastRoute.getDepartureTime().minusMinutes(MINUTES_TO_ALARM)).toDateTime()).toDurationMillis();
-		
-		// DEBUG: Set alarm in 10 seconds
-		// return (new DateTime().plusSeconds(10)).getMillis();
+	{		
+		return (_lastRoute.getDepartureTime().minusMinutes(MINUTES_TO_ALARM)).toDateTime().getMillis();
 	}
 	
 	private boolean isStationValid(String station)
