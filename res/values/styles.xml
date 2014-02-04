@@ -13,24 +13,21 @@
     </style>
     
     <style name="TitleLabel">
-        <item name="android:textSize">36sp</item>
+        <item name="android:textSize">32sp</item>
         <item name="android:textColor">#FF0000</item>
         <item name="android:shadowColor">#000000</item>
     	<item name="android:shadowRadius">10</item>
     	<item name="android:shadowDx">-2</item>
     	<item name="android:shadowDy">2</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:paddingTop">40dp</item>
     </style>
     
     <style name="StationLabel" parent="@style/RegularLabel">
         <item name="android:textAllCaps">true</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:paddingLeft">8dp</item>
     </style>
     
     <style name="TimerLabel" parent="@style/RegularLabel">
-        <item name="android:textSize">82sp</item>
+        <item name="android:textSize">66sp</item>
     </style>
     
     <style name="RegularLabel">

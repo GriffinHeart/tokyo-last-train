@@ -38,8 +38,8 @@ public class AlarmActivity extends Activity
 		});
 		
 		// Set font
-		Typeface lightFont = Typeface.createFromAsset(getAssets(), "fonts/KozGoPr6N-Light.otf");
-		((TextView) findViewById(R.id.label_alarm_msg)).setTypeface(lightFont);
+		Typeface font = Typeface.createFromAsset(getAssets(), "fonts/Avenir Next.ttc");
+		((TextView) findViewById(R.id.label_alarm_msg)).setTypeface(font);
 	}
 	
 	private Vibrator startVibration()

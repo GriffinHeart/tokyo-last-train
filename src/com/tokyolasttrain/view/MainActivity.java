@@ -113,27 +113,25 @@ public class MainActivity extends Activity
 		InputStream stream = null;
         try
         {
-        	stream = getAssets().open("loading_animation.gif");
+        	stream = getAssets().open("gif/loading.gif");
         }
         catch (IOException e) {}
         GifDecoderView splashAnimation = new GifDecoderView(this, stream);
         ((FrameLayout) _layoutLoading).addView(splashAnimation);
 
 		// Set font
-		Typeface lightFont = Typeface.createFromAsset(getAssets(), "fonts/KozGoPr6N-Light.otf");
-		((TextView) findViewById(R.id.label_title)).setTypeface(lightFont);
-		((TextView) findViewById(R.id.label_origin)).setTypeface(lightFont);
-		_textViewOrigin.setTypeface(lightFont);
-		((TextView) findViewById(R.id.label_destination)).setTypeface(lightFont);
-		_textViewDestination.setTypeface(lightFont);
-		((TextView) findViewById(R.id.label_missed_train)).setTypeface(lightFont);
-		_labelError.setTypeface(lightFont);
-		_labelStation.setTypeface(lightFont);
-		_labelLine.setTypeface(lightFont);
-		_labelDepartureTime.setTypeface(lightFont);
-		
-		Typeface extraLightFont = Typeface.createFromAsset(getAssets(), "fonts/KozGoPr6N-ExtraLight.otf");
-		_labelTimer.setTypeface(extraLightFont);
+		Typeface font = Typeface.createFromAsset(getAssets(), "fonts/Avenir Next.ttc");
+		((TextView) findViewById(R.id.label_title)).setTypeface(font);
+		((TextView) findViewById(R.id.label_origin)).setTypeface(font);
+		((TextView) findViewById(R.id.label_destination)).setTypeface(font);
+		((TextView) findViewById(R.id.label_missed_train)).setTypeface(font);
+		_textViewOrigin.setTypeface(font);
+		_textViewDestination.setTypeface(font);
+		_labelError.setTypeface(font);
+		_labelStation.setTypeface(font);
+		_labelLine.setTypeface(font);
+		_labelDepartureTime.setTypeface(font);
+		_labelTimer.setTypeface(font);
 	}
 	
 	@Override
