@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
+import org.joda.time.LocalDateTime;
 
 import android.accounts.NetworkErrorException;
 import android.app.Activity;
@@ -39,6 +40,9 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.tokyolasttrain.LocalDateTimeSerializer;
 import com.tokyolasttrain.R;
 import com.tokyolasttrain.api.FetchLastRoute;
 import com.tokyolasttrain.api.HyperdiaApi;
@@ -155,15 +159,19 @@ public class MainActivity extends Activity
 			_textViewDestination.setText(destinationStation);
 		}
 		
-		// TODO: FIX !
-		/*
-		Gson gson = new Gson(); String json;
+		String json;
 		if (!(json = sharedPrefs.getString("LastRoute", "")).isEmpty())
-		{
-			LastRoute lastRoute = gson.fromJson(json, LastRoute.class);
-			_planner.setLastRoute(lastRoute);
+		{		
+			try {
+
+				Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeSerializer()).create();
+				LastRoute lastRoute = gson.fromJson(json, LastRoute.class);
+				_planner.setLastRoute(lastRoute);
+				onGotResults(lastRoute);
+			} catch(Exception e) {
+				// there was a problem reading the saved result
+			}
 		}
-		*/
 	}
 	
 	@Override
@@ -185,18 +193,18 @@ public class MainActivity extends Activity
 			prefsEdited = true;
 		}
 		
-		// TODO: FIX !
-		/*
 		if (_planner.hasSetLastRoute())
 		{
-			
-			Gson gson = new Gson();
-			String json = gson.toJson(_planner.getLastRoute());
-			prefsEditor.putString("LastRoute", json);
-			
-			prefsEdited = true;
-		}
-		*/
+			try {
+				Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeSerializer()).create();
+				String json = gson.toJson(_planner.getLastRoute());
+				prefsEditor.putString("LastRoute", json);
+				prefsEdited = true;
+
+			} catch (Exception e) {
+				// there was a problem saving the results
+			}
+		}		
 		
 		if (prefsEdited)
 		{
