@@ -24,5 +24,9 @@
     <style name="label_caps" parent="@style/label_regular">
         <item name="android:textAllCaps">true</item>
     </style>
+    
+    <style name="label_alarm" parent="@style/label_regular">
+        <item name="android:textColor">#000000</item>
+    </style>
 
 </resources>

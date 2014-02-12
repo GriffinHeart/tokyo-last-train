@@ -12,9 +12,8 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.view.Window;
 import android.widget.TextView;
 
 import com.tokyolasttrain.R;
@@ -34,21 +33,21 @@ public class AlarmActivity extends Activity
 		final Vibrator vibrator = startVibration();
 		final MediaPlayer player = startSound();
 		
-		((Button) findViewById(R.id.button_alarm_ok)).setOnClickListener(new OnClickListener()
-		{	
+		findViewById(R.id.dismiss_alarm).setOnClickListener(new OnClickListener()
+        {	
 			@Override
 			public void onClick(View v)
 			{
 				stopVibration(vibrator);
 				stopSound(player);
 				
-				finish();
+				// finish();
 			}
 		});
 		
 		// Set font
-		Typeface font = Typeface.createFromAsset(getAssets(), "fonts/Avenir Next.ttc");
-		((TextView) findViewById(R.id.label_alarm_msg)).setTypeface(font);
+		Typeface lightFont = Typeface.createFromAsset(getAssets(), "fonts/FuturaLT-Light.ttf");
+		((TextView) findViewById(R.id.label_alarm_timer)).setTypeface(lightFont);
 	}
 	
 	private Vibrator startVibration()

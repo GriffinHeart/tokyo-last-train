@@ -32,7 +32,6 @@
         
         <activity
             android:name=".view.AlarmActivity"
-            android:theme="@android:style/Theme.Dialog"
             android:launchMode="singleInstance" />
 
         <receiver

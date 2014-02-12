@@ -1,25 +1,22 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FF0000"
     android:padding="@dimen/activity_margin"
-    android:orientation="vertical"
-    android:gravity="center"
     tools:context=".AlarmActivity" >
 
     <TextView
-        android:id="@+id/label_alarm_msg"
+        android:id="@+id/label_alarm_timer"
+        style="@style/label_alarm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/alarm_message"
-        android:textSize="@dimen/label_timer"
-        style="@style/label_caps" />
-    
-    <Button
-        android:id="@+id/button_alarm_ok"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        android:background="@drawable/ic_ok" />
+        android:layout_centerInParent="true"
+        android:textSize="@dimen/label_timer" />
 
-</LinearLayout>
+    <View
+        android:id="@+id/dismiss_alarm"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</RelativeLayout>

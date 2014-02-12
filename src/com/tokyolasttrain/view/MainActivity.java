@@ -303,7 +303,7 @@ public class MainActivity extends Activity
 			
 			if (_planner.alarmOn() && _planner.hasSetLastRoute())
 			{
-				setAlarm(_planner.getTimeLeftForAlarm());
+				setAlarm(_planner.getAlarmTime());
 			}
 			else if (!_planner.alarmOn())
 			{
@@ -478,7 +478,7 @@ public class MainActivity extends Activity
 		
 		if (_planner.alarmOn())
 		{
-			setAlarm(_planner.getTimeLeftForAlarm());
+			setAlarm(_planner.getAlarmTime());
 		}
 		
 		DateTime currentTime = new DateTime();
