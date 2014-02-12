@@ -63,11 +63,11 @@ public class MainActivity extends Activity
 	
 	private PendingIntent _alarmSender;
 	private AlarmManager _alarmManager;
-	private boolean _notifyUser = false;
 	
 	private View _background, _layoutLoading, _layoutError, _layoutLastTrain, _layoutMissedTrain;
 	private AutoCompleteTextView _textViewOrigin, _textViewDestination;
 	private Button _btnOk;
+	private CheckBox _checkBox_alarm;
 	private TextView _labelError, _labelStation, _labelLine, _labelDepartureTime, _labelTimer;
 	
 	@Override
@@ -103,7 +103,7 @@ public class MainActivity extends Activity
 		_textViewDestination.setOnItemClickListener(DestinationTextView_OnItemClick);
 		_textViewDestination.setOnKeyListener(DestinationTextView_OnKey);
 		
-		((CheckBox) findViewById(R.id.checkbox_alarm)).setOnCheckedChangeListener(AlarmCheckBox_OnCheckedChange);
+		(_checkBox_alarm = (CheckBox) findViewById(R.id.checkbox_alarm)).setOnCheckedChangeListener(AlarmCheckBox_OnCheckedChange);
 		
 		(_btnOk = (Button) findViewById(R.id.button_ok)).setOnClickListener(OkButton_OnClick);
 		
@@ -124,18 +124,20 @@ public class MainActivity extends Activity
         ((FrameLayout) _layoutLoading).addView(splashAnimation);
 
 		// Set font
-		Typeface font = Typeface.createFromAsset(getAssets(), "fonts/Avenir Next.ttc");
-		((TextView) findViewById(R.id.label_title)).setTypeface(font);
-		((TextView) findViewById(R.id.label_origin)).setTypeface(font);
-		((TextView) findViewById(R.id.label_destination)).setTypeface(font);
-		((TextView) findViewById(R.id.label_missed_train)).setTypeface(font);
-		_textViewOrigin.setTypeface(font);
-		_textViewDestination.setTypeface(font);
-		_labelError.setTypeface(font);
-		_labelStation.setTypeface(font);
-		_labelLine.setTypeface(font);
-		_labelDepartureTime.setTypeface(font);
-		_labelTimer.setTypeface(font);
+		Typeface regularFont = Typeface.createFromAsset(getAssets(), "fonts/FuturaLT-Book.ttf");
+		Typeface lightFont = Typeface.createFromAsset(getAssets(), "fonts/FuturaLT-Light.ttf");
+		
+		((TextView) findViewById(R.id.label_title)).setTypeface(lightFont);
+		((TextView) findViewById(R.id.label_origin)).setTypeface(regularFont);
+		((TextView) findViewById(R.id.label_destination)).setTypeface(regularFont);
+		((TextView) findViewById(R.id.label_missed_train)).setTypeface(regularFont);
+		_textViewOrigin.setTypeface(regularFont);
+		_textViewDestination.setTypeface(regularFont);
+		_labelError.setTypeface(regularFont);
+		_labelStation.setTypeface(regularFont);
+		_labelLine.setTypeface(regularFont);
+		_labelDepartureTime.setTypeface(regularFont);
+		_labelTimer.setTypeface(lightFont);
 	}
 	
 	@Override
@@ -144,6 +146,9 @@ public class MainActivity extends Activity
 		super.onResume();
 		
 		SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+		
+		_planner.notifyUser(sharedPrefs.getBoolean("NotifyUser", false));
+		_checkBox_alarm.setChecked(_planner.alarmOn());
 		
 		String originStation;
 		if (!(originStation = sharedPrefs.getString("OriginStation", "")).isEmpty())
@@ -162,15 +167,14 @@ public class MainActivity extends Activity
 		String json;
 		if (!(json = sharedPrefs.getString("LastRoute", "")).isEmpty())
 		{		
-			try {
-
+			try
+			{
 				Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeSerializer()).create();
 				LastRoute lastRoute = gson.fromJson(json, LastRoute.class);
 				_planner.setLastRoute(lastRoute);
 				onGotResults(lastRoute);
-			} catch(Exception e) {
-				// there was a problem reading the saved result
 			}
+			catch(Exception e) { /* there was a problem reading the saved result */ }
 		}
 	}
 	
@@ -179,37 +183,31 @@ public class MainActivity extends Activity
 	{
 		super.onStop();
 		
-		boolean prefsEdited = false;
 		Editor prefsEditor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+		prefsEditor.putBoolean("NotifyUser", _planner.alarmOn());
 		
 		if (_planner.hasSetStation(Station.Origin))
 		{
 			prefsEditor.putString("OriginStation", _planner.getStation(Station.Origin));
-			prefsEdited = true;
 		}
+		
 		if (_planner.hasSetStation(Station.Destination))
 		{
 			prefsEditor.putString("DestinationStation", _planner.getStation(Station.Destination));
-			prefsEdited = true;
 		}
-		
+
 		if (_planner.hasSetLastRoute())
 		{
-			try {
+			try
+			{
 				Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeSerializer()).create();
 				String json = gson.toJson(_planner.getLastRoute());
 				prefsEditor.putString("LastRoute", json);
-				prefsEdited = true;
-
-			} catch (Exception e) {
-				// there was a problem saving the results
 			}
+			catch (Exception e) { /* there was a problem saving the results */ }
 		}		
 		
-		if (prefsEdited)
-		{
-			prefsEditor.commit();
-		}
+		prefsEditor.commit();
 	}
 	
 	@Override
@@ -304,13 +302,13 @@ public class MainActivity extends Activity
 		@Override
 		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
 		{
-			_notifyUser = isChecked;
+			_planner.notifyUser(isChecked);
 			
-			if (_notifyUser && _planner.hasSetLastRoute())
+			if (_planner.alarmOn() && _planner.hasSetLastRoute())
 			{
 				setAlarm(_planner.getTimeLeftForAlarm());
 			}
-			else if (!_notifyUser)
+			else if (!_planner.alarmOn())
 			{
 				cancelAlarm();
 			}
@@ -421,7 +419,7 @@ public class MainActivity extends Activity
 	{
 		_planner.setLastRoute(null);
 		
-		if (_notifyUser)
+		if (_planner.alarmOn())
 		{
 			cancelAlarm();
 		}
@@ -477,7 +475,7 @@ public class MainActivity extends Activity
 		_labelLine.setText(route.getLine());
 		_labelDepartureTime.setText(String.format("%02d:%02d", route.getDepartureTime().getHourOfDay(), route.getDepartureTime().getMinuteOfHour()));
 		
-		if (_notifyUser)
+		if (_planner.alarmOn())
 		{
 			setAlarm(_planner.getTimeLeftForAlarm());
 		}

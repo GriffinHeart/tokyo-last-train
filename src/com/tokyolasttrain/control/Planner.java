@@ -20,6 +20,7 @@ public class Planner
 	private String _originStation, _destinationStation;
 	
 	private LastRoute _lastRoute;
+	private boolean _notifyUser = false;
 	
 	private Planner(Context context)
 	{
@@ -107,7 +108,16 @@ public class Planner
 		return _lastRoute;
 	}
 	
-	// TODO: Test
+	public void notifyUser(boolean notify)
+	{
+		_notifyUser = notify;
+	}
+	
+	public boolean alarmOn()
+	{
+		return _notifyUser;
+	}
+	
 	public long getTimeLeftForAlarm()
 	{		
 		return (_lastRoute.getDepartureTime().minusMinutes(MINUTES_TO_ALARM)).toDateTime().getMillis();
