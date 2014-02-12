@@ -13,7 +13,7 @@
     </style>
     
     <style name="TitleLabel">
-        <item name="android:textSize">32sp</item>
+        <item name="android:textSize">30sp</item>
         <item name="android:textColor">#FF0000</item>
         <item name="android:shadowColor">#000000</item>
     	<item name="android:shadowRadius">10</item>
@@ -27,11 +27,11 @@
     </style>
     
     <style name="TimerLabel" parent="@style/RegularLabel">
-        <item name="android:textSize">66sp</item>
+        <item name="android:textSize">58sp</item>
     </style>
     
     <style name="RegularLabel">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:textColor">#FF0000</item>
         <item name="android:shadowColor">#000000</item>
     	<item name="android:shadowRadius">10</item>
