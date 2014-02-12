@@ -12,7 +12,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/alarm_message"
-        style="@style/TitleLabel" />
+        android:textSize="@dimen/label_timer"
+        style="@style/label_caps" />
     
     <Button
         android:id="@+id/button_alarm_ok"

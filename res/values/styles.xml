@@ -1,42 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     
-    <style name="StationTextView" parent="@android:style/TextAppearance.Medium">
+    <style name="textview_station" parent="@android:style/TextAppearance.Medium">
         <item name="android:completionThreshold">2</item>
 		<item name="android:singleLine">true</item>
 		<item name="android:selectAllOnFocus">true</item>
 		<item name="android:textColor">@android:color/black</item>
+		<item name="android:layout_marginTop">2dp</item>
 		<item name="android:layout_marginLeft">30dp</item>
 		<item name="android:paddingLeft">4dp</item>
 		<item name="android:paddingRight">4dp</item>
 		<item name="android:background">@drawable/bg_textview</item>
     </style>
     
-    <style name="TitleLabel">
-        <item name="android:textSize">30sp</item>
+    <style name="label_regular">
         <item name="android:textColor">#FF0000</item>
         <item name="android:shadowColor">#000000</item>
     	<item name="android:shadowRadius">10</item>
     	<item name="android:shadowDx">-2</item>
     	<item name="android:shadowDy">2</item>
+    </style>
+    
+    <style name="label_caps" parent="@style/label_regular">
         <item name="android:textAllCaps">true</item>
-    </style>
-    
-    <style name="StationLabel" parent="@style/RegularLabel">
-        <item name="android:textAllCaps">true</item>
-    </style>
-    
-    <style name="TimerLabel" parent="@style/RegularLabel">
-        <item name="android:textSize">58sp</item>
-    </style>
-    
-    <style name="RegularLabel">
-        <item name="android:textSize">18sp</item>
-        <item name="android:textColor">#FF0000</item>
-        <item name="android:shadowColor">#000000</item>
-    	<item name="android:shadowRadius">10</item>
-    	<item name="android:shadowDx">-2</item>
-    	<item name="android:shadowDy">2</item>
     </style>
 
 </resources>

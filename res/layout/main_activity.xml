@@ -3,226 +3,224 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity" >
-    
+
     <ImageView
         android:id="@+id/background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:scaleType="centerCrop"
         android:background="@drawable/background"
         android:contentDescription="@string/desc"
-        android:focusable="true" 
-	    android:focusableInTouchMode="true" />
-    
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:scaleType="centerCrop" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="30dp"
-        android:orientation="vertical"
-        android:gravity="center_horizontal" >
-    
-        <!-- TITLE -->
-	    <TextView
-	        android:id="@+id/label_title"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:text="@string/app_name"
-	        style="@style/TitleLabel" />
-	    
-	    <!-- ORIGIN -->
-	    <LinearLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	       	android:layout_marginLeft="30dp"
-	       	android:layout_marginRight="30dp"
-	        android:layout_marginTop="40dp"
-	        android:orientation="horizontal" >
-	    
-	        <ImageView
-	            android:id="@+id/ic_origin"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:src="@drawable/ic_origin"
-	            android:contentDescription="@string/desc" />
-	        
-	        <RelativeLayout
-		        android:layout_width="wrap_content"
-		        android:layout_height="match_parent"
-		        android:layout_marginLeft="10dp" >
-	        
-		        <TextView
-			        android:id="@+id/label_origin"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:text="@string/where_are_you"
-			        style="@style/StationLabel" />
-		        
-		        <AutoCompleteTextView
-			        android:id="@+id/textview_origin"
-			        android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			        android:layout_alignParentBottom="true"
-			        style="@style/StationTextView"/>
-	        
-	        </RelativeLayout>
-	    </LinearLayout>
-	       
-	    <!-- DESTINATION -->
-	    <LinearLayout
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	       	android:layout_marginLeft="30dp"
-	       	android:layout_marginRight="30dp"
-	        android:layout_marginTop="40dp"
-	        android:orientation="horizontal" >
-	    
-	        <ImageView
-	            android:id="@+id/ic_destination"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:src="@drawable/ic_destination"
-	            android:contentDescription="@string/desc" />
-	        
-	        <RelativeLayout
-		        android:layout_width="wrap_content"
-		        android:layout_height="match_parent"
-		        android:layout_marginLeft="10dp" >
-		        
-		        <TextView
-                    android:id="@+id/label_destination"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/where_to_go"
-                    style="@style/StationLabel" />
+        android:layout_marginBottom="@dimen/main_vertical_margin"
+        android:layout_marginLeft="@dimen/main_horizontal_margin"
+        android:layout_marginRight="@dimen/main_horizontal_margin"
+        android:layout_marginTop="@dimen/main_vertical_margin"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
 
-                <CheckBox
-                    android:id="@+id/checkbox_alarm"
-                    android:layout_width="wrap_content"
+        <!-- TITLE -->
+
+        <TextView
+            android:id="@+id/label_title"
+            style="@style/label_caps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textSize="@dimen/label_title" />
+
+        <!-- ORIGIN -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/content_separation"
+            android:gravity="bottom"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/ic_origin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/station_ic_right_margin"
+                android:contentDescription="@string/desc"
+                android:src="@drawable/ic_origin" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:button="@drawable/checkbox_alarm" />
-				
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:id="@+id/label_origin"
+                        style="@style/label_caps"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/where_are_you"
+                        android:textSize="@dimen/label_regular" />
+
+                    <CheckBox
+                        android:id="@+id/button_location"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:button="@drawable/ic_location"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+                <AutoCompleteTextView
+                    android:id="@+id/textview_origin"
+                    style="@style/textview_station"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- DESTINATION -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/content_separation"
+            android:gravity="bottom"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/ic_destination"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/station_ic_right_margin"
+                android:contentDescription="@string/desc"
+                android:src="@drawable/ic_destination" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:id="@+id/label_destination"
+                        style="@style/label_caps"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/where_to_go"
+                        android:textSize="@dimen/label_regular" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_alarm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:button="@drawable/checkbox_alarm" />
+                </LinearLayout>
+
                 <AutoCompleteTextView
                     android:id="@+id/textview_destination"
+                    style="@style/textview_station"
                     android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			        android:layout_alignParentBottom="true"
-			        style="@style/StationTextView"/>
-	        
-	    	</RelativeLayout>
-	    </LinearLayout>
-	
-	    <!-- INFO -->
-	    <RelativeLayout 
-	        android:layout_width="match_parent"
-	        android:layout_height="0dp"
-	        android:layout_weight="1"
-	        android:layout_marginLeft="30dp"
-	        android:layout_marginRight="30dp"
-	        android:layout_marginTop="40dp"
-	        android:gravity="center" >
-	    
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- INFO -->
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/content_separation"
+            android:layout_weight="1"
+            android:gravity="center" >
+
+            <!--
 		    <Button
 		        android:id="@+id/button_ok"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:background="@drawable/ic_ok" />
-			
-		    <FrameLayout
-		        android:id="@+id/layout_loading"
-		        android:layout_width="80dp"
-		        android:layout_height="80dp"
-		        android:visibility="gone" />
-		    
-		    <LinearLayout
-		        android:id="@+id/layout_last_train"
-		        android:layout_width="match_parent"
-		        android:layout_height="match_parent"
-		        android:orientation="vertical"
-		        android:visibility="gone" >
-		        
-		        <TextView
-			        android:id="@+id/label_station"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        style="@style/RegularLabel" />
-		        
-		        <TextView
-			        android:id="@+id/label_line"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        style="@style/RegularLabel" />
-		        
-		        <TextView
-			        android:id="@+id/label_departure_time"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        style="@style/RegularLabel" />
-		
-		        <TextView
-		            android:id="@+id/label_timer"
-		            android:layout_width="wrap_content"
-		            android:layout_height="0dp"
-		            android:layout_weight="1"
-		            android:gravity="center"
-		            style="@style/TimerLabel" />
-	        
-	    	</LinearLayout>
-	    	
-		    <LinearLayout
-		        android:id="@+id/layout_missed_train"
-		        android:layout_width="match_parent"
-		        android:layout_height="match_parent"
-		        android:orientation="vertical"
-		        android:gravity="center_horizontal"
-		        android:visibility="gone" >
-		        
-		        <ImageView
-			        android:layout_width="wrap_content"
-			        android:layout_height="0dp"
-			        android:layout_weight="1"
-			        android:src="@drawable/ic_missed_train"
-			        android:contentDescription="@string/desc" />
-		        
-		        <TextView
-			        android:id="@+id/label_missed_train"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:text="@string/missed_train"
-			        android:gravity="center"
-			        style="@style/RegularLabel" />
-	        
-	    	</LinearLayout>
-	    	
-		    <LinearLayout
-		        android:id="@+id/layout_error"
-		        android:layout_width="match_parent"
-		        android:layout_height="match_parent"
-		        android:orientation="vertical"
-		        android:gravity="center_horizontal"
-		        android:visibility="gone" >
-		        
-		        <!-- TODO: Change to error icon -->
-		        <ImageView
-			        android:layout_width="wrap_content"
-			        android:layout_height="0dp"
-			        android:layout_weight="1"
-			        android:src="@drawable/ic_missed_train"
-			        android:contentDescription="@string/desc" />
-		        
-		        <TextView
-			        android:id="@+id/label_error"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:text="@string/missed_train"
-			        android:gravity="center"
-			        style="@style/RegularLabel" />
-	        
-	    	</LinearLayout>
-		    
-	    </RelativeLayout>
-	</LinearLayout>
-	
+            -->
+
+            <FrameLayout
+                android:id="@+id/layout_loading"
+                android:layout_width="@dimen/loading_ic_size"
+                android:layout_height="@dimen/loading_ic_size"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/layout_last_train"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/label_station"
+                    style="@style/label_regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/label_regular" />
+
+                <TextView
+                    android:id="@+id/label_line"
+                    style="@style/label_regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/label_regular" />
+
+                <TextView
+                    android:id="@+id/label_departure_time"
+                    style="@style/label_regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/label_regular" />
+
+                <TextView
+                    android:id="@+id/label_timer"
+                    style="@style/label_caps"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textSize="@dimen/label_timer" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/label_missed_train"
+                style="@style/label_regular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="@dimen/info_ic_bottom_margin"
+                android:drawableTop="@drawable/ic_missed_train"
+                android:gravity="center"
+                android:text="@string/missed_train"
+                android:textSize="@dimen/label_regular" />
+
+            <TextView
+                android:id="@+id/label_error"
+                style="@style/label_regular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="@dimen/info_ic_bottom_margin"
+                android:drawableTop="@drawable/ic_missed_train"
+                android:gravity="center"
+                android:text="@string/missed_train"
+                android:textSize="@dimen/label_regular" />
+        </RelativeLayout>
+    </LinearLayout>
+
 </RelativeLayout>
