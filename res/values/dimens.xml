@@ -14,7 +14,7 @@
 	
 	<!-- TEXT SIZE -->
 	<dimen name="label_title">30sp</dimen>
-	<dimen name="label_timer">58sp</dimen>
+	<dimen name="label_timer">92sp</dimen>
 	<dimen name="label_regular">16sp</dimen>
     
 </resources>

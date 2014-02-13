@@ -147,11 +147,11 @@
             android:layout_weight="1"
             android:gravity="center" >
 
-		    <Button
-		        android:id="@+id/button_ok"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:background="@drawable/ic_ok" />
+            <Button
+                android:id="@+id/button_ok"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_ok" />
 
             <FrameLayout
                 android:id="@+id/layout_loading"
@@ -163,6 +163,7 @@
                 android:id="@+id/layout_last_train"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="center_vertical"
                 android:orientation="vertical"
                 android:visibility="gone" >
 
@@ -191,27 +192,26 @@
                     android:id="@+id/label_timer"
                     style="@style/label_regular"
                     android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
                     android:textSize="@dimen/label_timer" />
             </LinearLayout>
 
             <TextView
                 android:id="@+id/label_missed_train"
                 style="@style/label_regular"
-                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawablePadding="@dimen/info_ic_bottom_margin"
                 android:drawableTop="@drawable/ic_missed_train"
                 android:gravity="center"
                 android:text="@string/missed_train"
-                android:textSize="@dimen/label_regular" />
+                android:textSize="@dimen/label_regular"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/label_error"
-                android:visibility="gone"
                 style="@style/label_regular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -219,7 +219,8 @@
                 android:drawableTop="@drawable/ic_missed_train"
                 android:gravity="center"
                 android:text="@string/missed_train"
-                android:textSize="@dimen/label_regular" />
+                android:textSize="@dimen/label_regular"
+                android:visibility="gone" />
         </RelativeLayout>
     </LinearLayout>
 
