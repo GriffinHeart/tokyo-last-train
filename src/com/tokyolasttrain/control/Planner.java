@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.DateTime;
-
 import android.content.Context;
 
 import com.tokyolasttrain.api.HyperdiaApi.LastRoute;
@@ -122,9 +120,6 @@ public class Planner
 	
 	public long getAlarmTime()
 	{		
-		// DEBUG
-		// return new DateTime().plusMinutes(10).getMillis();
-		
 		return (_lastRoute.getDepartureTime().minusMinutes(MINUTES_TO_ALARM)).toDateTime().getMillis();
 	}
 	

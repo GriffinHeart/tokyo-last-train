@@ -50,8 +50,7 @@ public class SplashActivity extends Activity
     {
     	_runnable.interrupt();
     	
-    	Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(SplashActivity.this, MainActivity.class));
         finish();
     }
     

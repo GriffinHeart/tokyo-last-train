@@ -7,7 +7,7 @@
 		<item name="android:selectAllOnFocus">true</item>
 		<item name="android:textColor">@android:color/black</item>
 		<item name="android:layout_marginTop">2dp</item>
-		<item name="android:layout_marginLeft">30dp</item>
+		<item name="android:layout_marginLeft">20dp</item>
 		<item name="android:paddingLeft">4dp</item>
 		<item name="android:paddingRight">4dp</item>
 		<item name="android:background">@drawable/bg_textview</item>

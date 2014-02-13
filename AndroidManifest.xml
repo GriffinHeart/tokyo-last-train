@@ -32,6 +32,7 @@
         
         <activity
             android:name=".view.AlarmActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleInstance" />
 
         <receiver

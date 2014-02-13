@@ -2,13 +2,18 @@ package com.tokyolasttrain.view;
 
 import java.io.IOException;
 
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
+
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
@@ -17,9 +22,16 @@ import android.view.Window;
 import android.widget.TextView;
 
 import com.tokyolasttrain.R;
+import com.tokyolasttrain.control.Planner;
 
 public class AlarmActivity extends Activity
 {
+	private TextView _labelTimer;
+	private CountDownTimer _timer;
+	
+	private Vibrator _vibrator;
+	private MediaPlayer _player;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
 	{
@@ -30,24 +42,61 @@ public class AlarmActivity extends Activity
 		
 		setContentView(R.layout.alarm_activity);
 		
-		final Vibrator vibrator = startVibration();
-		final MediaPlayer player = startSound();
+		_labelTimer = (TextView) findViewById(R.id.label_alarm_timer);
 		
 		findViewById(R.id.dismiss_alarm).setOnClickListener(new OnClickListener()
         {	
 			@Override
 			public void onClick(View v)
 			{
-				stopVibration(vibrator);
-				stopSound(player);
-				
-				// finish();
+				dismissAlarm();
 			}
 		});
+		
+		setTimer();
+		
+		_vibrator = startVibration();
+		_player = startSound();
 		
 		// Set font
 		Typeface lightFont = Typeface.createFromAsset(getAssets(), "fonts/FuturaLT-Light.ttf");
 		((TextView) findViewById(R.id.label_alarm_timer)).setTypeface(lightFont);
+	}
+	
+	private void setTimer()
+	{
+		Planner planner = Planner.getInstance(getApplicationContext());
+		
+		DateTime currentTime = new DateTime();
+		if (currentTime.isAfter(planner.getLastRoute().getDepartureTime().toDateTime()))
+		{
+	        dismissAlarm();
+		}
+		else
+		{
+			long millisecondsLeft = new Interval(new DateTime(), planner.getLastRoute().getDepartureTime().toDateTime()).toDurationMillis();
+			if (_timer != null)
+			{
+				_timer.cancel();
+			}
+			
+			_timer = new CountDownTimer(millisecondsLeft, 1000)
+			{
+				public void onTick(long millisUntilFinished)
+				{
+					int seconds = (int) (millisUntilFinished / 1000) % 60 ;
+					int minutes = (int) ((millisUntilFinished / (1000 * 60)) % 60);
+					int hours   = (int) ((millisUntilFinished / (1000 * 60 * 60)) % 24);
+
+					_labelTimer.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+				}
+
+				public void onFinish()
+				{
+					dismissAlarm();
+				}
+			}.start();
+		}
 	}
 	
 	private Vibrator startVibration()
@@ -93,5 +142,14 @@ public class AlarmActivity extends Activity
 	private void stopSound(MediaPlayer player)
 	{
 		player.stop();
+	}
+	
+	private void dismissAlarm()
+	{
+		stopVibration(_vibrator);
+		stopSound(_player);
+		
+		startActivity(new Intent(AlarmActivity.this, MainActivity.class));
+        finish();
 	}
 }
