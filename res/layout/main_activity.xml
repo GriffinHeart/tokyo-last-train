@@ -147,13 +147,11 @@
             android:layout_weight="1"
             android:gravity="center" >
 
-            <!--
 		    <Button
 		        android:id="@+id/button_ok"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:background="@drawable/ic_ok" />
-            -->
 
             <FrameLayout
                 android:id="@+id/layout_loading"
@@ -202,6 +200,7 @@
             <TextView
                 android:id="@+id/label_missed_train"
                 style="@style/label_regular"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawablePadding="@dimen/info_ic_bottom_margin"
@@ -212,6 +211,7 @@
 
             <TextView
                 android:id="@+id/label_error"
+                android:visibility="gone"
                 style="@style/label_regular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

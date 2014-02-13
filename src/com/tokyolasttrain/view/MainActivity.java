@@ -23,6 +23,7 @@ import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.Window;
 import android.view.WindowManager;
@@ -31,6 +32,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -64,7 +66,7 @@ public class MainActivity extends Activity
 	
 	private View _background, _layoutLoading, _layoutLastTrain;
 	private AutoCompleteTextView _textViewOrigin, _textViewDestination;
-	// private Button _btnOk;
+	private Button _btnOk;
 	private CheckBox _checkBox_alarm;
 	private TextView _labelError, _labelStation, _labelLine, _labelDepartureTime, _labelTimer, _labelMissedTrain;
 	
@@ -101,7 +103,7 @@ public class MainActivity extends Activity
 		
 		(_checkBox_alarm = (CheckBox) findViewById(R.id.checkbox_alarm)).setOnCheckedChangeListener(AlarmCheckBox_OnCheckedChange);
 		
-		// (_btnOk = (Button) findViewById(R.id.button_ok)).setOnClickListener(OkButton_OnClick);
+		(_btnOk = (Button) findViewById(R.id.button_ok)).setOnClickListener(OkButton_OnClick);
 		
 		_labelError = (TextView) findViewById(R.id.label_error);
 		_labelStation = (TextView) findViewById(R.id.label_station);
@@ -312,7 +314,6 @@ public class MainActivity extends Activity
 		}
 	};
 	
-	/*
 	private OnClickListener OkButton_OnClick = new OnClickListener()
 	{	
 		@Override
@@ -321,7 +322,6 @@ public class MainActivity extends Activity
 			processInput();
 		}
 	};
-	*/
 	
 	private void processSingleInput(TextView textView, Station station, Station otherStation)
 	{
@@ -351,7 +351,7 @@ public class MainActivity extends Activity
 						break;
 					}
 					
-					Toast.makeText(getApplicationContext(), "ERROR: Invalid station", Toast.LENGTH_LONG).show();
+					Toast.makeText(getApplicationContext(), getResources().getString(R.string.equal_station_error), Toast.LENGTH_LONG).show();
 				}
 			}
 			else
@@ -383,11 +383,10 @@ public class MainActivity extends Activity
 				break;
 			}
 			
-			Toast.makeText(getApplicationContext(), "ERROR: Invalid station!", Toast.LENGTH_LONG).show();
+			Toast.makeText(getApplicationContext(), getResources().getString(R.string.invalid_station_error), Toast.LENGTH_LONG).show();
 		}
 	}
 	
-	/*
 	private void processInput()
 	{
 		String originStationName = _textViewOrigin.getText().toString().toLowerCase(Locale.US);
@@ -398,14 +397,14 @@ public class MainActivity extends Activity
 			_textViewOrigin.requestFocus();
 			_textViewOrigin.selectAll();
 		
-			Toast.makeText(getApplicationContext(), "ERROR: Invalid station!", Toast.LENGTH_LONG).show();
+			Toast.makeText(getApplicationContext(), getResources().getString(R.string.invalid_station_error), Toast.LENGTH_SHORT).show();
 		}				
 		else if (!_planner.setStation(Station.Destination, destinationStationName))
 		{
 			_textViewDestination.requestFocus();
 			_textViewDestination.selectAll();
 		
-			Toast.makeText(getApplicationContext(), "ERROR: Invalid station!", Toast.LENGTH_LONG).show();
+			Toast.makeText(getApplicationContext(), getResources().getString(R.string.invalid_station_error), Toast.LENGTH_SHORT).show();
 		}
 		else
 		{
@@ -413,7 +412,6 @@ public class MainActivity extends Activity
 			getLastRoute();
 		}
 	}
-	*/
 	
 	private boolean _done = false;
 	private void getLastRoute()
@@ -537,7 +535,7 @@ public class MainActivity extends Activity
 	
 	private void ShowLoading()
 	{
-		// _btnOk.setVisibility(View.GONE);
+		_btnOk.setVisibility(View.GONE);
 		
 		_layoutLoading.setVisibility(View.VISIBLE);
 		_layoutLastTrain.setVisibility(View.GONE);
@@ -549,7 +547,7 @@ public class MainActivity extends Activity
 	{
 		_labelError.setText(errorMessage);
 		
-		// _btnOk.setVisibility(View.GONE);
+		_btnOk.setVisibility(View.GONE);
 		
 		_layoutLoading.setVisibility(View.GONE);
 		_layoutLastTrain.setVisibility(View.GONE);
@@ -559,7 +557,7 @@ public class MainActivity extends Activity
 	
 	private void ShowLastTrain()
 	{
-		// _btnOk.setVisibility(View.GONE);
+		_btnOk.setVisibility(View.GONE);
 		
 		_layoutLoading.setVisibility(View.GONE);
 		_layoutLastTrain.setVisibility(View.VISIBLE);
@@ -569,7 +567,7 @@ public class MainActivity extends Activity
 	
 	private void ShowMissedTrain()
 	{
-		// _btnOk.setVisibility(View.GONE);
+		_btnOk.setVisibility(View.GONE);
 		
 		_layoutLoading.setVisibility(View.GONE);
 		_layoutLastTrain.setVisibility(View.GONE);

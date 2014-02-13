@@ -122,6 +122,9 @@ public class Planner
 	
 	public long getAlarmTime()
 	{		
+		// DEBUG
+		// return new DateTime().plusMinutes(10).getMillis();
+		
 		return (_lastRoute.getDepartureTime().minusMinutes(MINUTES_TO_ALARM)).toDateTime().getMillis();
 	}
 	
