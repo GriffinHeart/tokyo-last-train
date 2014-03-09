@@ -38,6 +38,11 @@
         <receiver
             android:name=".control.AlarmReceiver"
             android:process=":remote" />
+
+
+    
+
+    <meta-data android:name="com.crashlytics.ApiKey" android:value="72c2efd89146d9f2329a8d28b4e4a25c00d7950c"/>
         
     </application>
 </manifest>

@@ -10,6 +10,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import com.crashlytics.android.Crashlytics;
 import com.tokyolasttrain.R;
 import com.tokyolasttrain.view.gif.GifWebView;
 
@@ -23,7 +24,8 @@ public class SplashActivity extends Activity
     {
         super.onCreate(savedInstanceState);
         
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        Crashlytics.start(this);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
   
         setContentView(R.layout.splash_activity);
