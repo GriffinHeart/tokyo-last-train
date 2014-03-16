@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.analytics.tracking.android.EasyTracker;
 import com.tokyolasttrain.R;
 import com.tokyolasttrain.view.gif.GifWebView;
 
@@ -18,7 +19,17 @@ public class SplashActivity extends Activity
 {
 	private static int SPLASH_TIMEOUT = 5000;
 	private InterruptableRunnable _runnable;
+	@Override
+	protected void onStart() {
+		super.onStart();
+		EasyTracker.getInstance(this).activityStart(this);
+	}
 	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);
+	}
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {

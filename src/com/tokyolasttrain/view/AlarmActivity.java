@@ -21,6 +21,7 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.TextView;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.tokyolasttrain.R;
 import com.tokyolasttrain.control.Planner;
 
@@ -31,6 +32,19 @@ public class AlarmActivity extends Activity
 	
 	private Vibrator _vibrator;
 	private MediaPlayer _player;
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		
+		EasyTracker.getInstance(this).activityStart(this);
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		EasyTracker.getInstance(this).activityStop(this);
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -53,8 +67,10 @@ public class AlarmActivity extends Activity
 			}
 		});
 		
+		_vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 		setTimer();
 		
+		 
 		_vibrator = startVibration();
 		_player = startSound();
 		

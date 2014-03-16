@@ -40,6 +40,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tokyolasttrain.LocalDateTimeSerializer;
@@ -69,6 +70,15 @@ public class MainActivity extends Activity
 	private Button _btnOk;
 	private CheckBox _checkBox_alarm;
 	private TextView _labelError, _labelStation, _labelLine, _labelDepartureTime, _labelTimer, _labelMissedTrain;
+	
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		
+		EasyTracker.getInstance(this).activityStart(this);
+	}
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -137,6 +147,7 @@ public class MainActivity extends Activity
 		_labelLine.setTypeface(regularFont);
 		_labelDepartureTime.setTypeface(regularFont);
 		_labelTimer.setTypeface(lightFont);
+		
 	}
 	
 	@Override
@@ -207,6 +218,7 @@ public class MainActivity extends Activity
 		}		
 		
 		prefsEditor.commit();
+		EasyTracker.getInstance(this).activityStop(this);
 	}
 	
 	@Override
