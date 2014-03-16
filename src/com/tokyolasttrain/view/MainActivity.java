@@ -504,16 +504,16 @@ public class MainActivity extends Activity
 				_timer.cancel();
 			}
 			
-			_timer = new CountDownTimer(millisecondsLeft, 60000)	// 1000)
+			_timer = new CountDownTimer(millisecondsLeft, 1000)	// 60000)
 			{
 				public void onTick(long millisUntilFinished)
 				{
 					int hours   = (int) ((millisUntilFinished / (1000 * 60 * 60)) % 24);
 					int minutes = (int) ((millisUntilFinished / (1000 * 60)) % 60);
-					// int seconds = (int) (millisUntilFinished / 1000) % 60;
+					int seconds = (int) (millisUntilFinished / 1000) % 60;
 
-					// _labelTimer.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
-					_labelTimer.setText(String.format("%02d:%02d", hours, minutes));
+					_labelTimer.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+					//_labelTimer.setText(String.format("%02d:%02d", hours, minutes));
 				}
 
 				public void onFinish()
